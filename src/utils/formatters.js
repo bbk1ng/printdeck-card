@@ -10,6 +10,8 @@ export const formatDuration = (minutes, options = {}) => {
     completeText = 'Complete'
   } = options;
 
+  if (minutes == null || !Number.isFinite(Number(minutes))) return '---';
+
   if (!minutes || minutes <= 0) {
     return showComplete ? completeText : '0m';
   }

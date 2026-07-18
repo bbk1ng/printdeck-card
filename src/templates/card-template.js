@@ -9,13 +9,14 @@ import { temperatureDialogTemplate } from './components/temperature-controls';
 import { confirmDialogTemplate } from './components/confirm-dialog';
 
 export const cardTemplate = (context) => {
-  const { 
-    entities, 
-    hass, 
-    amsSlots, 
-    _toggleLight, 
-    _toggleFan, 
-    _cameraError, 
+  const {
+    entities,
+    hass,
+    amsSlots,
+    controlFlags = {},
+    _toggleLight,
+    _toggleFan,
+    _cameraError,
     isOnline,
     formatters,
     dialogConfig,
@@ -30,17 +31,23 @@ export const cardTemplate = (context) => {
   const controls = {
     lightState: hass.states[entities.chamber_light_entity]?.state,
     fanState: hass.states[entities.aux_fan_entity]?.state,
-    hasFan: !!entities.aux_fan_entity,
+    hasLight: Boolean(controlFlags.canLight),
+    hasFan: Boolean(controlFlags.canFan),
     onLightToggle: _toggleLight,
     onFanToggle: _toggleFan,
     hass
   };
 
+  const cameraEntity = entities.camera_entity
+    ? hass.states[entities.camera_entity]
+    : null;
+  const entityPicture = cameraEntity?.attributes?.entity_picture || '';
+
   const cameraProps = {
     isOnline,
     hasError: _cameraError,
     currentStage: entities.currentStage,
-    entityPicture: hass.states[entities.camera_entity]?.attributes?.entity_picture,
+    entityPicture,
     onError: context.handleImageError,
     onLoad: context.handleImageLoad
   };
@@ -51,11 +58,13 @@ export const cardTemplate = (context) => {
       ${cameraFeedTemplate(cameraProps)}
       ${printStatusTemplate(entities, {
         hass,
+        controlFlags,
         onPause: handlePauseDialog,
         onStop: handleStopDialog,
-        onImageError: context.handleImageError
+        onImageError: context.handleCoverError,
+        onImageLoad: context.handleCoverLoad
       })}
-      ${temperatureDisplayTemplate(entities, hass, dialogConfig, setDialogConfig)}
+      ${temperatureDisplayTemplate(entities, hass, dialogConfig, setDialogConfig, controlFlags)}
       ${materialSlotsTemplate(amsSlots)}
       ${temperatureDialogTemplate(dialogConfig, hass)}
       ${confirmDialogTemplate(confirmDialog)}

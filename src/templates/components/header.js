@@ -10,14 +10,14 @@ export const headerTemplate = (entities, controls) => html`
         ${localize.localize(`entity.sensor.state.${entities.status}`)}
         ${entities.isPrinting ? html`
           <span class="progress-text">
-            ${Math.round(entities.progress)}% | 
-            ${localize.t('print.layer')}: ${entities.currentLayer}/${entities.totalLayers}
+            ${entities.progress == null ? '---' : Math.round(entities.progress)}% |
+            ${localize.t('print.layer')}: ${entities.currentLayer ?? '---'}/${entities.totalLayers ?? '---'}
           </span>
         ` : ''}
       </div>
       ${entities.isPrinting ? html`
         <div class="progress-bar">
-          <div class="progress-fill" style="width: ${entities.progress}%"></div>
+          <div class="progress-fill" style="width: ${entities.progress ?? 0}%"></div>
         </div>
         <div class="layer-info">
           ${localize.t('time.left')}: ${formatDuration(entities.remainingTime)}
@@ -25,14 +25,16 @@ export const headerTemplate = (entities, controls) => html`
       ` : ''}
     </div>
     <div class="header-controls">
-      <button 
-        class="icon-button ${controls.lightState === 'on' ? 'active' : ''}" 
-        @click=${controls.onLightToggle}
-      >
-        <ha-icon icon="mdi:lightbulb"></ha-icon>
-      </button>
-      ${entities.aux_fan_entity ? html`
-        <button 
+      ${controls.hasLight ? html`
+        <button
+          class="icon-button ${controls.lightState === 'on' ? 'active' : ''}"
+          @click=${controls.onLightToggle}
+        >
+          <ha-icon icon="mdi:lightbulb"></ha-icon>
+        </button>
+      ` : ''}
+      ${controls.hasFan ? html`
+        <button
           class="icon-button ${controls.fanState === 'on' ? 'active' : ''}"
           @click=${controls.onFanToggle}
         >

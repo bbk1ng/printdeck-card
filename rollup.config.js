@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, copyFileSync, mkdirSync, existsSync } from 'node:fs';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
@@ -64,10 +64,24 @@ export default {
         }]
       ]
     }),
-    terser({
+    // ponytail: skip minify in --watch (ROLLUP_WATCH=true) so dev dist stays readable;
+    // prod `npm run build` still minifies.
+    !process.env.ROLLUP_WATCH && terser({
       format: {
         comments: /PrintWatch Card/
       }
-    })
+    }),
+    // ponytail: deploy-to-HA on build when HA_WWW_DEST is set — no new dep, host path
+    // stays out of git. Run `HA_WWW_DEST=/path/to/config/www/community/printwatch-card npm run watch`.
+    {
+      name: 'deploy-to-ha',
+      writeBundle() {
+        const dest = process.env.HA_WWW_DEST;
+        if (!dest) return;
+        if (!existsSync(dest)) mkdirSync(dest, { recursive: true });
+        copyFileSync('dist/printwatch-card.js', `${dest}/printwatch-card.js`);
+        console.log(`[deploy-to-ha] copied build -> ${dest}/printwatch-card.js`);
+      }
+    }
   ]
 };

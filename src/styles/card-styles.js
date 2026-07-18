@@ -259,18 +259,22 @@ export const cardStyles = css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    cursor: pointer;
+    cursor: default;
     padding: 12px;
     border-radius: 12px;
     transition: background-color 0.2s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
-  .temp-item:hover {
+  .temp-item.controllable {
+    cursor: pointer;
+  }
+
+  .temp-item.controllable:hover {
     background-color: var(--secondary-background-color);
   }
 
-  .temp-item:active {
+  .temp-item.controllable:active {
     background-color: var(--primary-color);
     opacity: 0.8;
   }
@@ -279,6 +283,24 @@ export const cardStyles = css`
     font-size: 32px;
     font-weight: 500;
     margin-bottom: 4px;
+  }
+
+  .temp-target {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--secondary-text-color);
+  }
+
+  .camera-error-hint {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 12px;
+    color: var(--secondary-text-color);
+    background: var(--ha-card-background, var(--card-background-color));
+    padding: 2px 6px;
+    border-radius: 4px;
+    z-index: 1;
   }
 
   /* Dialog Styles */

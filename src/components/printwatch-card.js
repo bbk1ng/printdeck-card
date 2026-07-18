@@ -5,6 +5,14 @@ import { cardStyles } from '../styles/card-styles';
 import { formatDuration, formatEndTime } from '../utils/formatters';
 import { isPrinting, isPaused, getAmsSlots, getEntityStates } from '../utils/state-helpers';
 import { DEFAULT_CONFIG, DEFAULT_CAMERA_REFRESH_RATE } from '../constants/config';
+import { resolveConfig } from '../utils/entity-map';
+import { withCacheBust } from '../utils/camera-helpers';
+import {
+  getControlFlags,
+  pressButton,
+  toggleLight,
+  toggleFan
+} from '../utils/control-helpers';
 import { localize } from '../utils/localize';
 
 class PrintWatchCard extends LitElement {
@@ -15,6 +23,7 @@ class PrintWatchCard extends LitElement {
       _lastCameraUpdate: { type: Number },
       _cameraUpdateInterval: { type: Number },
       _cameraError: { type: Boolean },
+      _coverError: { type: Boolean },
       _dialogConfig: { state: true },
       _confirmDialog: { state: true }
     };
@@ -29,6 +38,7 @@ class PrintWatchCard extends LitElement {
     this._lastCameraUpdate = 0;
     this._cameraUpdateInterval = DEFAULT_CAMERA_REFRESH_RATE;
     this._cameraError = false;
+    this._coverError = false;
     this._dialogConfig = { open: false };
     this._confirmDialog = { open: false };
     this.formatters = {
@@ -41,56 +51,72 @@ class PrintWatchCard extends LitElement {
     if (!config.printer_name) {
       throw new Error('Please define printer_name');
     }
-    this.config = { ...DEFAULT_CONFIG, ...config };
+    // Empty defaults first, then user config, then prefix resolution (A1)
+    const merged = { ...DEFAULT_CONFIG, ...config };
+    this.config = resolveConfig(merged);
     this._cameraUpdateInterval = config.camera_refresh_rate || DEFAULT_CAMERA_REFRESH_RATE;
   }
 
+  /**
+   * A2: missing online entity → treat as online/unknown (do not kill camera).
+   * Offline only when entity exists and state !== 'on'.
+   */
   isOnline() {
-    const onlineEntity = this.hass?.states[this.config.online_entity];
-    return onlineEntity?.state === 'on';
+    const id = this.config?.online_entity;
+    if (!id || !String(id).trim()) return true;
+    const onlineEntity = this.hass?.states?.[id];
+    if (!onlineEntity) return true;
+    return onlineEntity.state === 'on';
   }
 
   shouldUpdateCamera() {
-    if (!this.isOnline()) {
-      return false;
-    }
-
-    const now = Date.now();
-    return now - this._lastCameraUpdate > this._cameraUpdateInterval;
+    if (!this.isOnline()) return false;
+    return Date.now() - this._lastCameraUpdate > this._cameraUpdateInterval;
   }
 
-  handleImageError() {
+  handleCameraError() {
     this._cameraError = true;
     this.requestUpdate();
   }
 
-  handleImageLoad() {
+  handleCameraLoad() {
     this._cameraError = false;
   }
 
-  _toggleLight() {
-    const lightEntity = this.hass.states[this.config.chamber_light_entity];
-    if (!lightEntity) return;
+  handleCoverError() {
+    this._coverError = true;
+    this.requestUpdate();
+  }
 
-    const service = lightEntity.state === 'on' ? 'turn_off' : 'turn_on';
-    this.hass.callService('light', service, {
-      entity_id: this.config.chamber_light_entity,
-    });
+  handleCoverLoad() {
+    this._coverError = false;
+  }
+
+  _toggleLight() {
+    toggleLight(this.hass, this.config.chamber_light_entity);
   }
 
   _toggleFan() {
-    const fanEntity = this.hass.states[this.config.aux_fan_entity];
-    if (!fanEntity) return;
-
-    const service = fanEntity.state === 'on' ? 'turn_off' : 'turn_on';
-    this.hass.callService('fan', service, {
-      entity_id: this.config.aux_fan_entity,
-    });
+    toggleFan(this.hass, this.config.aux_fan_entity);
   }
 
   updated(changedProps) {
     super.updated(changedProps);
     if (changedProps.has('hass')) {
+      // Clear sticky errors when entity_picture / token changes
+      const cam = this.hass?.states?.[this.config?.camera_entity];
+      const cover = this.hass?.states?.[this.config?.cover_image_entity];
+      const camPic = cam?.attributes?.entity_picture;
+      const coverPic = cover?.attributes?.entity_picture;
+      if (camPic && this._lastCameraPicture && camPic !== this._lastCameraPicture) {
+        this._cameraError = false;
+      }
+      if (coverPic && this._lastCoverPicture && coverPic !== this._lastCoverPicture) {
+        this._coverError = false;
+      }
+      this._lastCameraPicture = camPic;
+      this._lastCoverPicture = coverPic;
+
       if (this.shouldUpdateCamera()) {
         this._updateCameraFeed();
       }
@@ -98,44 +124,46 @@ class PrintWatchCard extends LitElement {
   }
 
   _updateCameraFeed() {
-    if (!this.isOnline()) {
-      return;
-    }
+    if (!this.isOnline()) return;
 
     this._lastCameraUpdate = Date.now();
-    
-    const timestamp = new Date().getTime();
+    const timestamp = Date.now();
+
     const cameraImg = this.shadowRoot?.querySelector('.camera-feed img');
     if (cameraImg) {
       const cameraEntity = this.hass.states[this.config.camera_entity];
-      if (cameraEntity?.attributes?.entity_picture) {
-        cameraImg.src = `${cameraEntity.attributes.entity_picture}&t=${timestamp}`;
+      const pic = cameraEntity?.attributes?.entity_picture;
+      if (pic) {
+        cameraImg.src = withCacheBust(pic, timestamp);
       }
     }
 
     const coverImg = this.shadowRoot?.querySelector('.preview-image img');
     if (coverImg) {
       const coverEntity = this.hass.states[this.config.cover_image_entity];
-      if (coverEntity?.attributes?.entity_picture) {
-        coverImg.src = `${coverEntity.attributes.entity_picture}&t=${timestamp}`;
+      const pic = coverEntity?.attributes?.entity_picture;
+      if (pic) {
+        coverImg.src = withCacheBust(pic, timestamp);
       }
     }
   }
 
   handlePauseDialog() {
+    const flags = getControlFlags(this.hass, this.config);
+    const isPausedNow = isPaused(this.hass, this.config);
+    if (isPausedNow && !flags.canResume) return;
+    if (!isPausedNow && !flags.canPause) return;
+
     this._confirmDialog = {
       open: true,
       type: 'pause',
       title: localize.t('dialogs.pause.title'),
       message: localize.t('dialogs.pause.message'),
       onConfirm: () => {
-        const entity = isPaused(this.hass, this.config) 
-          ? this.config.resume_button_entity 
+        const entity = isPaused(this.hass, this.config)
+          ? this.config.resume_button_entity
           : this.config.pause_button_entity;
-        
-        this.hass.callService('button', 'press', {
-          entity_id: entity
-        });
+        pressButton(this.hass, entity);
         this._confirmDialog = { open: false };
       },
       onCancel: () => {
@@ -146,15 +174,16 @@ class PrintWatchCard extends LitElement {
   }
 
   handleStopDialog() {
+    const flags = getControlFlags(this.hass, this.config);
+    if (!flags.canStop) return;
+
     this._confirmDialog = {
       open: true,
       type: 'stop',
       title: localize.t('dialogs.stop.title'),
       message: localize.t('dialogs.stop.message'),
       onConfirm: () => {
-        this.hass.callService('button', 'press', {
-          entity_id: this.config.stop_button_entity
-        });
+        pressButton(this.hass, this.config.stop_button_entity);
         this._confirmDialog = { open: false };
       },
       onCancel: () => {
@@ -171,7 +200,8 @@ class PrintWatchCard extends LitElement {
 
     const entities = getEntityStates(this.hass, this.config);
     const amsSlots = getAmsSlots(this.hass, this.config);
-    
+    const controlFlags = getControlFlags(this.hass, this.config);
+
     const setDialogConfig = (config) => {
       this._dialogConfig = config;
       this.requestUpdate();
@@ -181,22 +211,25 @@ class PrintWatchCard extends LitElement {
       entities,
       hass: this.hass,
       amsSlots,
+      controlFlags,
       formatters: this.formatters,
       _toggleLight: () => this._toggleLight(),
       _toggleFan: () => this._toggleFan(),
       _cameraError: this._cameraError,
+      _coverError: this._coverError,
       isOnline: this.isOnline(),
-      handleImageError: () => this.handleImageError(),
-      handleImageLoad: () => this.handleImageLoad(),
+      handleImageError: () => this.handleCameraError(),
+      handleImageLoad: () => this.handleCameraLoad(),
+      handleCoverError: () => this.handleCoverError(),
+      handleCoverLoad: () => this.handleCoverLoad(),
       dialogConfig: this._dialogConfig,
       confirmDialog: this._confirmDialog,
       setDialogConfig,
       handlePauseDialog: () => this.handlePauseDialog(),
-      handleStopDialog: () => this.handleStopDialog(),
+      handleStopDialog: () => this.handleStopDialog()
     });
   }
 
-  // This is used by Home Assistant for card size calculation
   getCardSize() {
     return 6;
   }

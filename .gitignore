@@ -28,6 +28,17 @@ Thumbs.db
 # AI Stuff
 codebase.md
 .aidigestignore
+docs/
 
 # Sample API
 entity_example.json
+# local dev deploy helper (host-specific path)
+dev-sync.sh
+
+# packed tarballs
+*.tgz
+
+# orch pipeline state (keep docs/config tracked)
+.orch/*
+!.orch/ORCH.md
+!.orch/orch.yml
