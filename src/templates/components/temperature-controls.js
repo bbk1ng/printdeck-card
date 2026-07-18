@@ -13,10 +13,10 @@ export const temperatureDialogTemplate = (dialogConfig, hass) => {
 
     let value;
     if (dialogConfig.type === 'speed') {
-      const select = dialog.querySelector('ha-select');
+      const select = dialog.querySelector('select.speed-select');
       value = select?.value;
     } else {
-      const input = dialog.querySelector('ha-textfield');
+      const input = dialog.querySelector('input.temp-input');
       value = input ? parseFloat(input.value) : null;
     }
 
@@ -32,50 +32,41 @@ export const temperatureDialogTemplate = (dialogConfig, hass) => {
     if (ok) dialogConfig.onClose();
   };
 
-  let selectedValue = dialogConfig.currentValue;
-
-  const handleSelectionChange = (e) => {
-    selectedValue = e.target.value;
-    // Prevent dialog from closing
-    e.stopPropagation();
-  };
-
+  // Native input/select — HA's ha-textfield/ha-select are lazy-loaded and
+  // often not registered on dashboard views, rendering as empty elements.
   const renderContent = () => {
     if (dialogConfig.type === 'speed') {
       const profiles =
         hass.states[dialogConfig.entityId]?.attributes?.options ||
         ['silent', 'standard', 'sport', 'ludicrous'];
       return html`
-        <ha-select
-          label=${localize.t('temperatures.speed_profile')}
-          .value=${selectedValue}
-          @selected=${handleSelectionChange}
-          @closed=${(e) => e.stopPropagation()}
-          class="speed-select"
-          fixedMenuPosition
-          naturalMenuWidth
-        >
-          ${profiles.map(profile => html`
-            <mwc-list-item .value=${profile}>
-              ${profile.charAt(0).toUpperCase() + profile.slice(1)}
-            </mwc-list-item>
-          `)}
-        </ha-select>
+        <label class="dialog-label">
+          ${localize.t('temperatures.speed_profile')}
+          <select class="speed-select" @click=${(e) => e.stopPropagation()}>
+            ${profiles.map(profile => html`
+              <option value=${profile} ?selected=${profile === dialogConfig.currentValue}>
+                ${profile.charAt(0).toUpperCase() + profile.slice(1)}
+              </option>
+            `)}
+          </select>
+        </label>
       `;
     }
 
     return html`
-      <ha-textfield
-        label=${localize.t(`temperatures.${dialogConfig.type}_target`)}
-        .value=${dialogConfig.currentValue}
-        type="number"
-        min=${dialogConfig.min}
-        max=${dialogConfig.max}
-        class="temp-input"
-        suffix="°C"
-        autoValidate
-        required
-      ></ha-textfield>
+      <label class="dialog-label">
+        ${localize.t(`temperatures.${dialogConfig.type}_target`)}
+        <input
+          class="temp-input"
+          type="number"
+          .value=${String(dialogConfig.currentValue ?? '')}
+          min=${dialogConfig.min}
+          max=${dialogConfig.max}
+          step="1"
+          inputmode="numeric"
+          required
+        />
+      </label>
       <div class="range-limits">
         ${localize.t('temperatures.range', { min: dialogConfig.min, max: dialogConfig.max })}
       </div>

@@ -317,16 +317,30 @@ export const cardStyles = css`
     --dialog-content-padding: 0;
   }
 
-  .temp-input {
+  .dialog-label {
     display: block;
-    width: 100%;
-    margin: 8px 0;
+    color: var(--secondary-text-color);
+    font-size: 14px;
   }
 
+  .temp-input,
   .speed-select {
     display: block;
     width: 100%;
     margin: 8px 0;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: var(--primary-text-color);
+    background: var(--ha-card-background, var(--card-background-color));
+    border: 1px solid var(--divider-color);
+    border-radius: 8px;
+  }
+
+  .temp-input:focus,
+  .speed-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
   }
 
   .range-limits {
