@@ -2,6 +2,7 @@
 import { html } from 'lit';
 import { localize } from '../../utils/localize';
 import { selectOption, setNumberValue } from '../../utils/control-helpers';
+import { CARD_VERSION } from '../../constants/version';
 
 export const temperatureDialogTemplate = (dialogConfig, hass) => {
   if (!dialogConfig?.open) return html``;
@@ -81,6 +82,7 @@ export const temperatureDialogTemplate = (dialogConfig, hass) => {
     >
       <div class="dialog-content">
         ${renderContent()}
+        <div class="dialog-version">printwatch ${CARD_VERSION}</div>
       </div>
       <mwc-button
         slot="secondaryAction"

@@ -350,6 +350,14 @@ export const cardStyles = css`
     text-align: center;
   }
 
+  .dialog-version {
+    color: var(--secondary-text-color);
+    font-size: 11px;
+    margin-top: 12px;
+    text-align: right;
+    opacity: 0.6;
+  }
+
   mwc-button.save-button {
     --mdc-theme-primary: var(--primary-color);
   }

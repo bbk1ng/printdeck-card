@@ -14,6 +14,7 @@ import {
   toggleFan
 } from '../utils/control-helpers';
 import { localize } from '../utils/localize';
+import { CARD_VERSION } from '../constants/version';
 
 class PrintWatchCard extends LitElement {
   static get properties() {
@@ -236,5 +237,11 @@ class PrintWatchCard extends LitElement {
 }
 
 customElements.define('printwatch-card', PrintWatchCard);
+
+console.info(
+  `%c PRINTWATCH-CARD %c v${CARD_VERSION} `,
+  'background:#03a9f4;color:#fff;font-weight:bold;border-radius:4px 0 0 4px;padding:2px 0',
+  'background:#555;color:#fff;border-radius:0 4px 4px 0;padding:2px 0'
+);
 
 export default PrintWatchCard;
