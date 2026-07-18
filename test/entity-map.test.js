@@ -24,9 +24,14 @@ test('entity_prefix bambulab_p2s matches design table (spot checks)', () => {
   assert.equal(cfg.speed_profile_entity, 'sensor.bambulab_p2s_speed_profile');
   assert.equal(cfg.ams_slot1_entity, 'sensor.bambulab_p2s_ams_tray_1');
   assert.equal(cfg.chamber_light_entity, 'light.bambulab_p2s_chamber_light');
-  // Controls are not in the Phase 1 table (left unset by resolve)
-  assert.equal(cfg.pause_button_entity, undefined);
-  assert.equal(cfg.stop_button_entity, undefined);
+  // Phase 2: controls resolve from prefix too (UI presence-gates on hass)
+  assert.equal(cfg.pause_button_entity, 'button.bambulab_p2s_pause');
+  assert.equal(cfg.resume_button_entity, 'button.bambulab_p2s_resume');
+  assert.equal(cfg.stop_button_entity, 'button.bambulab_p2s_stop');
+  assert.equal(cfg.aux_fan_entity, 'fan.bambulab_p2s_aux_fan');
+  assert.equal(cfg.bed_target_number_entity, 'number.bambulab_p2s_bed_target_temperature');
+  assert.equal(cfg.nozzle_target_number_entity, 'number.bambulab_p2s_nozzle_target_temperature');
+  assert.equal(cfg.speed_select_entity, 'select.bambulab_p2s_printing_speed');
 });
 
 test('explicit override wins over prefix', () => {

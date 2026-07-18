@@ -28,8 +28,16 @@ export const ENTITY_SLOTS = {
   chamber_light_entity: { domain: 'light', suffix: 'chamber_light' },
   online_entity: { domain: 'binary_sensor', suffix: 'online' },
   print_weight_entity: { domain: 'sensor', suffix: 'print_weight' },
-  print_length_entity: { domain: 'sensor', suffix: 'print_length' }
-  // pause/resume/stop intentionally absent — presence-gated when user sets them
+  print_length_entity: { domain: 'sensor', suffix: 'print_length' },
+  // Phase 2 controls — only exist when ha-bambulab control gate is open
+  // (cloud MQTT or printer LAN developer mode); UI presence-gates on hass.states
+  pause_button_entity: { domain: 'button', suffix: 'pause' },
+  resume_button_entity: { domain: 'button', suffix: 'resume' },
+  stop_button_entity: { domain: 'button', suffix: 'stop' },
+  aux_fan_entity: { domain: 'fan', suffix: 'aux_fan' },
+  bed_target_number_entity: { domain: 'number', suffix: 'bed_target_temperature' },
+  nozzle_target_number_entity: { domain: 'number', suffix: 'nozzle_target_temperature' },
+  speed_select_entity: { domain: 'select', suffix: 'printing_speed' }
 };
 
 /**

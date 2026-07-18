@@ -16,6 +16,16 @@ const FAN_DOMAINS = ['fan'];
  * @param {object} hass
  * @param {Record<string, string>} config
  */
+/**
+ * Writable control id: dedicated slot first, else legacy display key when the
+ * user explicitly pointed it at a writable domain (pre-Phase-2 configs).
+ */
+const writableId = (hass, preferredId, legacyId, domains) => {
+  if (isControllable(hass, preferredId, domains)) return preferredId;
+  if (isControllable(hass, legacyId, domains)) return legacyId;
+  return null;
+};
+
 export const getControlFlags = (hass, config) => {
   const pauseId = config.pause_button_entity;
   const resumeId = config.resume_button_entity;
@@ -26,6 +36,16 @@ export const getControlFlags = (hass, config) => {
   const nozzleTargetId = config.nozzle_target_temp_entity;
   const speedId = config.speed_profile_entity;
 
+  const bedTargetControlId = writableId(
+    hass, config.bed_target_number_entity, bedTargetId, NUMBER_DOMAINS
+  );
+  const nozzleTargetControlId = writableId(
+    hass, config.nozzle_target_number_entity, nozzleTargetId, NUMBER_DOMAINS
+  );
+  const speedControlId = writableId(
+    hass, config.speed_select_entity, speedId, SELECT_DOMAINS
+  );
+
   return {
     canPause: isControllable(hass, pauseId, BUTTON_DOMAINS),
     canResume: isControllable(hass, resumeId, BUTTON_DOMAINS),
@@ -33,9 +53,12 @@ export const getControlFlags = (hass, config) => {
     canLight: isControllable(hass, lightId, LIGHT_DOMAINS),
     canFan: isControllable(hass, fanId, FAN_DOMAINS),
     // Writable set-value UI only for number/select — sensors are display-only
-    canSetBedTarget: isControllable(hass, bedTargetId, NUMBER_DOMAINS),
-    canSetNozzleTarget: isControllable(hass, nozzleTargetId, NUMBER_DOMAINS),
-    canSetSpeed: isControllable(hass, speedId, SELECT_DOMAINS),
+    canSetBedTarget: Boolean(bedTargetControlId),
+    canSetNozzleTarget: Boolean(nozzleTargetControlId),
+    canSetSpeed: Boolean(speedControlId),
+    bedTargetControlId,
+    nozzleTargetControlId,
+    speedControlId,
     // Display-only targets/speed when entity exists as any domain
     hasBedTarget: entityExists(hass, bedTargetId),
     hasNozzleTarget: entityExists(hass, nozzleTargetId),

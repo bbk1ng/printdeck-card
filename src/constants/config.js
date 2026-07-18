@@ -30,6 +30,9 @@ export const DEFAULT_CONFIG = {
   stop_button_entity: '',
   chamber_light_entity: '',
   aux_fan_entity: '',
+  bed_target_number_entity: '',
+  nozzle_target_number_entity: '',
+  speed_select_entity: '',
   online_entity: '',
   print_weight_entity: '',
   print_length_entity: ''

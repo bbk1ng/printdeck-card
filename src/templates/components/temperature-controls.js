@@ -42,6 +42,9 @@ export const temperatureDialogTemplate = (dialogConfig, hass) => {
 
   const renderContent = () => {
     if (dialogConfig.type === 'speed') {
+      const profiles =
+        hass.states[dialogConfig.entityId]?.attributes?.options ||
+        ['silent', 'standard', 'sport', 'ludicrous'];
       return html`
         <ha-select
           label=${localize.t('temperatures.speed_profile')}
@@ -52,7 +55,7 @@ export const temperatureDialogTemplate = (dialogConfig, hass) => {
           fixedMenuPosition
           naturalMenuWidth
         >
-          ${['silent', 'standard', 'sport', 'ludicrous'].map(profile => html`
+          ${profiles.map(profile => html`
             <mwc-list-item .value=${profile}>
               ${profile.charAt(0).toUpperCase() + profile.slice(1)}
             </mwc-list-item>

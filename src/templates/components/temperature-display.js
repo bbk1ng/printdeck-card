@@ -78,7 +78,7 @@ export const temperatureDisplayTemplate = (
           handleControlClick(
             'bed',
             entities.bedTemp,
-            entities.bed_target_temp_entity,
+            controlFlags.bedTargetControlId,
             bedWritable
           )}
       >
@@ -94,7 +94,7 @@ export const temperatureDisplayTemplate = (
           handleControlClick(
             'nozzle',
             entities.nozzleTemp,
-            entities.nozzle_target_temp_entity,
+            controlFlags.nozzleTargetControlId,
             nozzleWritable
           )}
       >
@@ -110,7 +110,7 @@ export const temperatureDisplayTemplate = (
           handleControlClick(
             'speed',
             speedRaw || 'standard',
-            entities.speed_profile_entity,
+            controlFlags.speedControlId,
             speedWritable
           )}
       >
