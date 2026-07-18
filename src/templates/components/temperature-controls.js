@@ -9,7 +9,7 @@ export const temperatureDialogTemplate = (dialogConfig, hass) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const dialog = e.target.closest('ha-dialog');
+    const dialog = e.target.closest('.pw-dialog');
     if (!dialog) return;
 
     let value;
@@ -95,29 +95,31 @@ export const temperatureDialogTemplate = (dialogConfig, hass) => {
   };
 
   return html`
-    <ha-dialog
-      open
-      @closed=${dialogConfig.onClose}
-      .heading=${dialogConfig.title}
-    >
-      <div class="dialog-content">
-        ${renderContent()}
-        <div class="dialog-version">printwatch ${CARD_VERSION}</div>
+    <div class="pw-overlay" @click=${() => dialogConfig.onClose()}>
+      <div
+        class="pw-dialog"
+        role="dialog"
+        aria-modal="true"
+        @click=${(e) => e.stopPropagation()}
+        @keydown=${(e) => { if (e.key === 'Escape') dialogConfig.onClose(); }}
+      >
+        <div class="pw-dialog-header">
+          <span class="pw-dialog-title">${dialogConfig.title}</span>
+          <button class="dialog-btn close-button" @click=${() => dialogConfig.onClose()}>✕</button>
+        </div>
+        <div class="dialog-content">
+          ${renderContent()}
+          <div class="dialog-version">printwatch ${CARD_VERSION}</div>
+        </div>
+        <div class="pw-dialog-actions">
+          <button class="dialog-btn cancel-button" @click=${() => dialogConfig.onClose()}>
+            ${localize.t('controls.cancel')}
+          </button>
+          <button class="dialog-btn save-button" @click=${handleSubmit}>
+            ${localize.t('controls.save')}
+          </button>
+        </div>
       </div>
-      <button
-        slot="secondaryAction"
-        class="dialog-btn cancel-button"
-        @click=${() => dialogConfig.onClose()}
-      >
-        ${localize.t('controls.cancel')}
-      </button>
-      <button
-        slot="primaryAction"
-        class="dialog-btn save-button"
-        @click=${handleSubmit}
-      >
-        ${localize.t('controls.save')}
-      </button>
-    </ha-dialog>
+    </div>
   `;
 };

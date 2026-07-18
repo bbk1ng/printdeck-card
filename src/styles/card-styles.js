@@ -303,18 +303,55 @@ export const cardStyles = css`
     z-index: 1;
   }
 
-  /* Dialog Styles */
+  /* Dialog Styles — own overlay, no ha-dialog (lazy-loaded, unreliable) */
+  .pw-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  .pw-dialog {
+    background: var(--ha-card-background, var(--card-background-color, #fff));
+    color: var(--primary-text-color);
+    border-radius: 12px;
+    min-width: 300px;
+    max-width: 90vw;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .pw-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 0 20px;
+  }
+
+  .pw-dialog-title {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .pw-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 0 12px 12px 12px;
+  }
+
+  button.close-button {
+    font-size: 16px;
+    line-height: 1;
+    padding: 6px 10px;
+  }
+
   .dialog-content {
     padding: 20px;
     min-width: 300px;
     box-sizing: border-box;
-  }
-
-  ha-dialog {
-    --mdc-dialog-min-width: 320px;
-    --mdc-dialog-max-width: 480px;
-    --ha-dialog-border-radius: 12px;
-    --dialog-content-padding: 0;
   }
 
   .dialog-label {
