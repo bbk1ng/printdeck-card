@@ -358,12 +358,47 @@ export const cardStyles = css`
     opacity: 0.6;
   }
 
-  mwc-button.save-button {
-    --mdc-theme-primary: var(--primary-color);
+  .temp-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
-  mwc-button.cancel-button {
-    --mdc-theme-primary: var(--secondary-text-color);
+  .temp-row .temp-slider {
+    flex: 1;
+    accent-color: var(--primary-color);
+    margin: 8px 0;
+  }
+
+  .temp-row .temp-input {
+    width: 84px;
+    flex: none;
+  }
+
+  button.dialog-btn {
+    border: none;
+    background: none;
+    font: inherit;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  button.dialog-btn:hover {
+    background: rgba(127, 127, 127, 0.12);
+  }
+
+  button.save-button,
+  button.confirm-button {
+    color: var(--primary-color);
+  }
+
+  button.cancel-button {
+    color: var(--secondary-text-color);
   }
 
   ha-textfield {

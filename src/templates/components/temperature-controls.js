@@ -54,19 +54,39 @@ export const temperatureDialogTemplate = (dialogConfig, hass) => {
       `;
     }
 
+    const syncFrom = (e) => {
+      const wrap = e.target.closest('.dialog-content');
+      const other = e.target.type === 'range'
+        ? wrap.querySelector('input.temp-input')
+        : wrap.querySelector('input.temp-slider');
+      if (other) other.value = e.target.value;
+    };
+
     return html`
       <label class="dialog-label">
         ${localize.t(`temperatures.${dialogConfig.type}_target`)}
-        <input
-          class="temp-input"
-          type="number"
-          .value=${String(dialogConfig.currentValue ?? '')}
-          min=${dialogConfig.min}
-          max=${dialogConfig.max}
-          step="1"
-          inputmode="numeric"
-          required
-        />
+        <div class="temp-row">
+          <input
+            class="temp-slider"
+            type="range"
+            .value=${String(dialogConfig.currentValue ?? dialogConfig.min)}
+            min=${dialogConfig.min}
+            max=${dialogConfig.max}
+            step="1"
+            @input=${syncFrom}
+          />
+          <input
+            class="temp-input"
+            type="number"
+            .value=${String(dialogConfig.currentValue ?? '')}
+            min=${dialogConfig.min}
+            max=${dialogConfig.max}
+            step="1"
+            inputmode="numeric"
+            required
+            @input=${syncFrom}
+          />
+        </div>
       </label>
       <div class="range-limits">
         ${localize.t('temperatures.range', { min: dialogConfig.min, max: dialogConfig.max })}
@@ -84,20 +104,20 @@ export const temperatureDialogTemplate = (dialogConfig, hass) => {
         ${renderContent()}
         <div class="dialog-version">printwatch ${CARD_VERSION}</div>
       </div>
-      <mwc-button
+      <button
         slot="secondaryAction"
-        dialogAction="close"
-        class="cancel-button"
+        class="dialog-btn cancel-button"
+        @click=${() => dialogConfig.onClose()}
       >
         ${localize.t('controls.cancel')}
-      </mwc-button>
-      <mwc-button
+      </button>
+      <button
         slot="primaryAction"
+        class="dialog-btn save-button"
         @click=${handleSubmit}
-        class="save-button"
       >
         ${localize.t('controls.save')}
-      </mwc-button>
+      </button>
     </ha-dialog>
   `;
 };

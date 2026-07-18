@@ -14,21 +14,21 @@ export const confirmDialogTemplate = (dialogConfig) => {
       <div class="dialog-content">
         ${dialogConfig.message}
       </div>
-      <mwc-button
+      <button
         slot="secondaryAction"
         @click=${dialogConfig.onCancel}
-        class="cancel-button"
+        class="dialog-btn cancel-button"
       >
         ${localize.t('controls.cancel')}
-      </mwc-button>
-      <mwc-button
+      </button>
+      <button
         slot="primaryAction"
         @click=${dialogConfig.onConfirm}
-        class="confirm-button"
+        class="dialog-btn confirm-button"
         style="${dialogConfig.type === 'stop' ? 'color: rgb(229, 57, 53);' : ''}"
       >
         ${localize.t(`dialogs.${dialogConfig.type}.confirm`)}
-      </mwc-button>
+      </button>
     </ha-dialog>
   `;
 };
