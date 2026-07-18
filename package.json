@@ -1,6 +1,6 @@
 {
   "name": "printwatch-card",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A Home Assistant card for 3D printers",
   "type": "module",
   "main": "dist/printwatch-card.js",
