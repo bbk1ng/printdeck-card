@@ -1,3 +1,6 @@
+/** Default camera update interval in milliseconds. */
+export const DEFAULT_CAMERA_REFRESH_RATE = 1000;
+
 /**
  * Default configuration for the PrintDeck card.
  * Entity slots default empty — use `entity_prefix` or explicit `*_entity` keys.
@@ -36,11 +39,16 @@ export const DEFAULT_CONFIG = {
   online_entity: '',
   print_weight_entity: '',
   print_length_entity: '',
+  show_camera: true,
+  show_ams: true,
+  allow_temp_control: false,
+  camera_refresh_rate: DEFAULT_CAMERA_REFRESH_RATE,
   // Opt-in gate for unreleased features: `experimental: true` in card YAML.
   experimental: false
 };
 
-/**
- * Default camera update interval in milliseconds
- */
-export const DEFAULT_CAMERA_REFRESH_RATE = 1000;
+export const getFeatureFlags = (config = {}, cameraEntity = null) => ({
+  showCamera: config.show_camera !== false && Boolean(cameraEntity),
+  showAms: config.show_ams !== false,
+  allowTempControl: config.allow_temp_control === true
+});

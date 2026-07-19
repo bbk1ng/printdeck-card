@@ -1,7 +1,7 @@
 /**
  * Static Phase 1 domain/suffix table for ha-bambulab-style entity IDs.
  * Resolve: `{domain}.{prefix}_{suffix}`
- * Explicit config `*_entity` keys always win over prefix derivation.
+ * Precedence: flat `*_entity` > overrides.<key> > prefix derivation.
  */
 
 /** @type {Record<string, { domain: string, suffix: string }>} */
@@ -41,6 +41,15 @@ export const ENTITY_SLOTS = {
 };
 
 /**
+ * Multi-AMS tray keys (slot 5–16): supported as flat `*_entity` / `overrides.<key>`
+ * only — not prefix-derived (see README).
+ * @type {readonly string[]}
+ */
+export const MULTI_AMS_OVERRIDE_KEYS = Object.freeze(
+  Array.from({ length: 12 }, (_, i) => `ams_slot${i + 5}_entity`)
+);
+
+/**
  * Build entity id from prefix + slot table entry.
  * @param {string} prefix
  * @param {{ domain: string, suffix: string }} slot
@@ -58,7 +67,9 @@ export const isExplicitEntity = (value) =>
   typeof value === 'string' && value.trim() !== '';
 
 /**
- * Resolve card config: explicit *_entity → prefix table → empty.
+ * Resolve card config: flat *_entity > overrides.<key> > prefix table > empty.
+ * YAML-only `overrides:` map uses the same keys as flat `*_entity` slots,
+ * including multi-AMS `ams_slot5_entity`–`ams_slot16_entity` (no prefix derive).
  * Does not inject foreign P1S serials.
  *
  * @param {Record<string, unknown>} rawConfig
@@ -70,9 +81,26 @@ export const resolveConfig = (rawConfig = {}) => {
     typeof config.entity_prefix === 'string' && config.entity_prefix.trim()
       ? config.entity_prefix.trim()
       : '';
+  // Map form is canonical; YAML list-of-maps (`- camera_entity: ...`) is
+  // normalized by merging items so both shapes work.
+  const rawOverrides = config.overrides;
+  const overrides = Array.isArray(rawOverrides)
+    ? Object.assign(
+        {},
+        ...rawOverrides.filter(
+          (item) => item && typeof item === 'object' && !Array.isArray(item)
+        )
+      )
+    : rawOverrides && typeof rawOverrides === 'object'
+      ? rawOverrides
+      : {};
 
   for (const [key, slot] of Object.entries(ENTITY_SLOTS)) {
     if (isExplicitEntity(config[key])) continue;
+    if (isExplicitEntity(overrides[key])) {
+      config[key] = overrides[key];
+      continue;
+    }
     if (prefix) {
       config[key] = buildEntityId(prefix, slot);
     } else {
@@ -80,6 +108,14 @@ export const resolveConfig = (rawConfig = {}) => {
       if (config[key] === undefined || config[key] === null) {
         config[key] = '';
       }
+    }
+  }
+
+  // Multi-AMS slots 5–16: flat > overrides only (no prefix derivation)
+  for (const key of MULTI_AMS_OVERRIDE_KEYS) {
+    if (isExplicitEntity(config[key])) continue;
+    if (isExplicitEntity(overrides[key])) {
+      config[key] = overrides[key];
     }
   }
 

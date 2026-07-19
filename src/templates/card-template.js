@@ -7,6 +7,7 @@ import { temperatureDisplayTemplate } from './components/temperature-display';
 import { materialSlotsTemplate } from './components/material-slots';
 import { temperatureDialogTemplate } from './components/temperature-controls';
 import { confirmDialogTemplate } from './components/confirm-dialog';
+import { getFeatureFlags } from '../constants/config';
 
 export const cardTemplate = (context) => {
   const {
@@ -14,6 +15,7 @@ export const cardTemplate = (context) => {
     hass,
     amsSlots,
     controlFlags = {},
+    config = {},
     experimental = false,
     _toggleLight,
     _toggleFan,
@@ -41,6 +43,8 @@ export const cardTemplate = (context) => {
   const cameraEntity = entities.camera_entity
     ? hass.states[entities.camera_entity]
     : null;
+  const featureFlags = getFeatureFlags(config, cameraEntity);
+  const temperatureControlFlags = featureFlags.allowTempControl ? controlFlags : {};
   const entityPicture = cameraEntity?.attributes?.entity_picture || '';
 
   const cameraProps = {
@@ -55,7 +59,7 @@ export const cardTemplate = (context) => {
   return html`
     <div class="card">
       ${headerTemplate(entities, controls, experimental)}
-      ${cameraFeedTemplate(cameraProps)}
+      ${featureFlags.showCamera ? cameraFeedTemplate(cameraProps) : ''}
       ${printStatusTemplate(entities, {
         hass,
         controlFlags,
@@ -64,9 +68,15 @@ export const cardTemplate = (context) => {
         onImageError: context.handleCoverError,
         onImageLoad: context.handleCoverLoad
       })}
-      ${temperatureDisplayTemplate(entities, hass, dialogConfig, setDialogConfig, controlFlags)}
-      ${materialSlotsTemplate(amsSlots)}
-      ${temperatureDialogTemplate(dialogConfig, hass)}
+      ${temperatureDisplayTemplate(
+        entities,
+        hass,
+        dialogConfig,
+        setDialogConfig,
+        temperatureControlFlags
+      )}
+      ${featureFlags.showAms ? materialSlotsTemplate(amsSlots) : ''}
+      ${featureFlags.allowTempControl ? temperatureDialogTemplate(dialogConfig, hass) : ''}
       ${confirmDialogTemplate(confirmDialog)}
     </div>
   `;
