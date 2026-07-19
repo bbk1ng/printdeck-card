@@ -44,6 +44,103 @@ test('explicit override wins over prefix', () => {
   assert.equal(cfg.task_name_entity, 'sensor.bambulab_p2s_task_name');
 });
 
+test('overrides.<key> wins over entity_prefix derivation', () => {
+  const cfg = resolveConfig({
+    printer_name: 'P2S',
+    entity_prefix: 'bambulab_p2s',
+    overrides: {
+      camera_entity: 'camera.p2s_special',
+      bed_temp_entity: 'sensor.external_probe'
+    }
+  });
+  assert.equal(cfg.camera_entity, 'camera.p2s_special');
+  assert.equal(cfg.bed_temp_entity, 'sensor.external_probe');
+  // unset slots still derive from prefix
+  assert.equal(cfg.task_name_entity, 'sensor.bambulab_p2s_task_name');
+});
+
+test('flat *_entity key beats overrides.<key> beats prefix', () => {
+  const cfg = resolveConfig({
+    printer_name: 'P2S',
+    entity_prefix: 'bambulab_p2s',
+    camera_entity: 'camera.flat_wins',
+    overrides: {
+      camera_entity: 'camera.from_overrides',
+      bed_temp_entity: 'sensor.from_overrides'
+    }
+  });
+  // flat > overrides
+  assert.equal(cfg.camera_entity, 'camera.flat_wins');
+  // overrides > prefix
+  assert.equal(cfg.bed_temp_entity, 'sensor.from_overrides');
+  // prefix only
+  assert.equal(cfg.nozzle_temp_entity, 'sensor.bambulab_p2s_nozzle_temperature');
+});
+
+test('flat keys remain back-compat when overrides is absent', () => {
+  const cfg = resolveConfig({
+    entity_prefix: 'bambulab_p2s',
+    progress_entity: 'sensor.custom_progress',
+    camera_entity: 'camera.custom_cam'
+  });
+  assert.equal(cfg.progress_entity, 'sensor.custom_progress');
+  assert.equal(cfg.camera_entity, 'camera.custom_cam');
+  assert.equal(cfg.task_name_entity, 'sensor.bambulab_p2s_task_name');
+});
+
+test('missing overrides is a no-op', () => {
+  const cfg = resolveConfig({
+    entity_prefix: 'bambulab_p2s'
+  });
+  assert.equal(cfg.camera_entity, 'camera.bambulab_p2s_camera');
+  assert.equal(cfg.bed_temp_entity, 'sensor.bambulab_p2s_bed_temperature');
+});
+
+test('empty overrides map is a no-op', () => {
+  const cfg = resolveConfig({
+    entity_prefix: 'bambulab_p2s',
+    overrides: {}
+  });
+  assert.equal(cfg.camera_entity, 'camera.bambulab_p2s_camera');
+  assert.equal(cfg.progress_entity, 'sensor.bambulab_p2s_print_progress');
+});
+
+test('empty-string override does not beat prefix (same as empty flat key)', () => {
+  const cfg = resolveConfig({
+    entity_prefix: 'bambulab_p2s',
+    overrides: {
+      camera_entity: '',
+      bed_temp_entity: '   '
+    }
+  });
+  assert.equal(cfg.camera_entity, 'camera.bambulab_p2s_camera');
+  assert.equal(cfg.bed_temp_entity, 'sensor.bambulab_p2s_bed_temperature');
+});
+
+test('overrides applies multi-AMS ams_slot5–16 (not only ENTITY_SLOTS)', () => {
+  const cfg = resolveConfig({
+    entity_prefix: 'bambulab_p2s',
+    overrides: {
+      ams_slot5_entity: 'sensor.ams_tray_5',
+      ams_slot16_entity: 'sensor.ams_tray_16'
+    }
+  });
+  assert.equal(cfg.ams_slot5_entity, 'sensor.ams_tray_5');
+  assert.equal(cfg.ams_slot16_entity, 'sensor.ams_tray_16');
+  // slots 1–4 still prefix-derived when not overridden
+  assert.equal(cfg.ams_slot1_entity, 'sensor.bambulab_p2s_ams_tray_1');
+});
+
+test('flat multi-AMS key beats overrides.ams_slotN_entity', () => {
+  const cfg = resolveConfig({
+    ams_slot5_entity: 'sensor.flat_ams_5',
+    overrides: {
+      ams_slot5_entity: 'sensor.override_ams_5'
+    }
+  });
+  assert.equal(cfg.ams_slot5_entity, 'sensor.flat_ams_5');
+});
+
 test('no prefix + no entity keys → no P1S serial strings', () => {
   const cfg = resolveConfig({ printer_name: 'X' });
   const blob = JSON.stringify(cfg);
