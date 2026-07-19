@@ -156,3 +156,11 @@ test('buildEntityId formats domain.prefix_suffix', () => {
     'camera.bambulab_p2s_camera'
   );
 });
+
+test('overrides: list-of-maps form is normalized and applied', () => {
+  const config = resolveConfig({
+    entity_prefix: 'bambulab_p2s',
+    overrides: [{ camera_entity: 'camera.home_cam_sd_stream' }]
+  });
+  assert.equal(config.camera_entity, 'camera.home_cam_sd_stream');
+});

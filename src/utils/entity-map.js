@@ -81,9 +81,18 @@ export const resolveConfig = (rawConfig = {}) => {
     typeof config.entity_prefix === 'string' && config.entity_prefix.trim()
       ? config.entity_prefix.trim()
       : '';
-  const overrides =
-    config.overrides && typeof config.overrides === 'object' && !Array.isArray(config.overrides)
-      ? config.overrides
+  // Map form is canonical; YAML list-of-maps (`- camera_entity: ...`) is
+  // normalized by merging items so both shapes work.
+  const rawOverrides = config.overrides;
+  const overrides = Array.isArray(rawOverrides)
+    ? Object.assign(
+        {},
+        ...rawOverrides.filter(
+          (item) => item && typeof item === 'object' && !Array.isArray(item)
+        )
+      )
+    : rawOverrides && typeof rawOverrides === 'object'
+      ? rawOverrides
       : {};
 
   for (const [key, slot] of Object.entries(ENTITY_SLOTS)) {
