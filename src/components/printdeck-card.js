@@ -1,4 +1,4 @@
-// src/components/printwatch-card.js
+// src/components/printdeck-card.js
 import { LitElement, html } from 'lit';
 import { cardTemplate } from '../templates/card-template';
 import { cardStyles } from '../styles/card-styles';
@@ -16,7 +16,7 @@ import {
 import { localize } from '../utils/localize';
 import { CARD_VERSION } from '../constants/version';
 
-class PrintWatchCard extends LitElement {
+class PrintDeckCard extends LitElement {
   static get properties() {
     return {
       hass: { type: Object },
@@ -236,12 +236,10 @@ class PrintWatchCard extends LitElement {
   }
 }
 
-customElements.define('printwatch-card', PrintWatchCard);
-
 console.info(
-  `%c PRINTWATCH-CARD %c v${CARD_VERSION} `,
+  `%c PRINTDECK-CARD %c v${CARD_VERSION} `,
   'background:#03a9f4;color:#fff;font-weight:bold;border-radius:4px 0 0 4px;padding:2px 0',
   'background:#555;color:#fff;border-radius:0 4px 4px 0;padding:2px 0'
 );
 
-export default PrintWatchCard;
+export default PrintDeckCard;

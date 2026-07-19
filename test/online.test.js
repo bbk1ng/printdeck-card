@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 /**
- * Mirror of PrintWatchCard.isOnline semantics for unit testing without Lit.
+ * Mirror of PrintDeckCard.isOnline semantics for unit testing without Lit.
  * A2: missing entity → online; offline only when present and !== 'on'
  */
 const isOnline = (hass, config) => {

@@ -164,7 +164,7 @@ export class Localize {
    * @returns {string} Localized string
    */
   t(key, params = {}) {
-    return this.localize(`ui.card.printwatch.${key}`, params);
+    return this.localize(`ui.card.printdeck.${key}`, params);
   }
 }
 

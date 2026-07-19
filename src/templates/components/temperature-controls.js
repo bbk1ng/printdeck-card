@@ -109,7 +109,7 @@ export const temperatureDialogTemplate = (dialogConfig, hass) => {
         </div>
         <div class="dialog-content">
           ${renderContent()}
-          <div class="dialog-version">printwatch ${CARD_VERSION}</div>
+          <div class="dialog-version">printdeck ${CARD_VERSION}</div>
         </div>
         <div class="pw-dialog-actions">
           <button class="dialog-btn cancel-button" @click=${() => dialogConfig.onClose()}>

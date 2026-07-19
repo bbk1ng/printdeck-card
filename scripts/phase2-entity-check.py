@@ -3,7 +3,7 @@
 Interactive Phase 2 entity check for ha-bambulab printers.
 
 Compares live entities (from HA entity registry and/or REST API) against:
-  - Phase 1 PrintWatch slots (read-only map)
+  - Phase 1 PrintDeck slots (read-only map)
   - Expected control entities when mqtt_signature_required is OFF
     (Cloud mode or LAN developer mode)
   - Extra sensors already present under LAN signature mode
@@ -32,7 +32,7 @@ import urllib.request
 from collections import defaultdict
 from pathlib import Path
 
-# Phase 1 PrintWatch map (domain, suffix) — same as src/utils/entity-map.js
+# Phase 1 PrintDeck map (domain, suffix) — same as src/utils/entity-map.js
 PHASE1_SLOTS = {
     "print_status": ("sensor", "print_status"),
     "current_stage": ("sensor", "current_stage"),
@@ -248,7 +248,7 @@ def main() -> int:
         print(f"  {m['signal']}: {m['entity_id'] or '—'}  [{st}]")
     print()
 
-    print("--- Phase 1 PrintWatch slots ---")
+    print("--- Phase 1 PrintDeck slots ---")
     missing = report["phase1_missing"]
     ok = len(phase1) - len(missing)
     print(f"  present {ok}/{len(phase1)}")
@@ -278,7 +278,7 @@ def main() -> int:
         )
     else:
         print(
-            "Interpretation: some control entities exist. Wire Phase 2 PrintWatch control map\n"
+            "Interpretation: some control entities exist. Wire Phase 2 PrintDeck control map\n"
             "  (separate from Phase 1 sensor slots) using the entity IDs listed above."
         )
     print()

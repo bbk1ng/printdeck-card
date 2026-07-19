@@ -2,14 +2,14 @@
 
 PrintDeck is a fork of [PrintWatch Card](https://github.com/drkpxl/printwatch-card) by
 Steven Hubert. Contributions here target the fork
-([bbk1ng/printwatch-card](https://github.com/bbk1ng/printwatch-card)); general UI/feature ideas
+([bbk1ng/printdeck-card](https://github.com/bbk1ng/printdeck-card)); general UI/feature ideas
 may also be worth offering upstream.
 
 ## Development setup
 
 ```sh
-git clone https://github.com/bbk1ng/printwatch-card.git
-cd printwatch-card
+git clone https://github.com/bbk1ng/printdeck-card.git
+cd printdeck-card
 npm install
 npm run watch     # unminified rebuild on change; set HA_WWW_DEST=/path/to/ha/config/www to auto-copy
 npm test          # node --test suite — must pass before a PR

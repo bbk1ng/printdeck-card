@@ -5,7 +5,25 @@ All notable changes to this project will be documented in this file.
 Entries up to and including 1.2.0 are from the original
 [PrintWatch Card](https://github.com/drkpxl/printwatch-card) by Steven Hubert
 ([@drkpxl](https://github.com/drkpxl)). Entries from 1.3.0 onward are the
-PrintDeck fork ([bbk1ng/printwatch-card](https://github.com/bbk1ng/printwatch-card)).
+PrintDeck fork ([bbk1ng/printdeck-card](https://github.com/bbk1ng/printdeck-card)).
+
+## [1.4.0] - 2026-07-19 — PrintDeck code rename
+
+The rename announced in 1.3.0 lands in code. New standalone repository:
+[bbk1ng/printdeck-card](https://github.com/bbk1ng/printdeck-card).
+
+### Breaking / migration
+- Bundle renamed `printwatch-card.js` → **`printdeck-card.js`** — update your dashboard
+  resource URL (HACS: `/hacsfiles/printdeck-card/printdeck-card.js`).
+- Custom element renamed to **`custom:printdeck-card`**. The old `custom:printwatch-card`
+  tag still works as a legacy alias in this release; it will be removed in a future release.
+
+### Changed
+- Element class `PrintWatchCard` → `PrintDeckCard`; console banner now `PRINTDECK-CARD`.
+- `window.PRINTDECK_VERSION` / `window.PRINTDECK_BUILD_TIME` debug globals
+  (legacy `PRINTWATCH_*` names kept for one release).
+- Translation key namespace `ui.card.printwatch.*` → `ui.card.printdeck.*` (internal).
+- package.json name `printdeck-card`; hacs.json filename `printdeck-card.js`.
 
 ## [1.3.0] - 2026-07-19 — PrintDeck fork
 

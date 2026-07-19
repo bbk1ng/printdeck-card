@@ -15,11 +15,11 @@ const timestamp = new Date().getTime();
 export default {
   input: 'src/index.js',
   output: {
-    file: 'dist/printwatch-card.js',
+    file: 'dist/printdeck-card.js',
     format: 'es',
     sourcemap: true,
     banner: `/**
- * PrintWatch Card ${pkg.version}
+ * PrintDeck Card ${pkg.version}
  * Built: ${new Date().toISOString()}
  */`
   },
@@ -68,19 +68,19 @@ export default {
     // prod `npm run build` still minifies.
     !process.env.ROLLUP_WATCH && terser({
       format: {
-        comments: /PrintWatch Card/
+        comments: /PrintDeck Card/
       }
     }),
     // ponytail: deploy-to-HA on build when HA_WWW_DEST is set — no new dep, host path
-    // stays out of git. Run `HA_WWW_DEST=/path/to/config/www/community/printwatch-card npm run watch`.
+    // stays out of git. Run `HA_WWW_DEST=/path/to/config/www/community/printdeck-card npm run watch`.
     {
       name: 'deploy-to-ha',
       writeBundle() {
         const dest = process.env.HA_WWW_DEST;
         if (!dest) return;
         if (!existsSync(dest)) mkdirSync(dest, { recursive: true });
-        copyFileSync('dist/printwatch-card.js', `${dest}/printwatch-card.js`);
-        console.log(`[deploy-to-ha] copied build -> ${dest}/printwatch-card.js`);
+        copyFileSync('dist/printdeck-card.js', `${dest}/printdeck-card.js`);
+        console.log(`[deploy-to-ha] copied build -> ${dest}/printdeck-card.js`);
       }
     }
   ]

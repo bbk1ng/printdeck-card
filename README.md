@@ -12,10 +12,10 @@ A Home Assistant Lovelace card to monitor **and control** Bambu Lab 3D printers.
 > adds working print controls, and is actively developed against a Bambu Lab **P2S**.
 > Licensed MIT, same as upstream (see [LICENSE](LICENSE)).
 
-> **Naming note:** the card was recently renamed from PrintWatch to PrintDeck. The code rename
-> hasn't landed yet: the repo URL, custom element (`custom:printwatch-card`), resource file
-> (`printwatch-card.js`), console version banner, and dialog version tag all still say
-> `printwatch` — existing dashboard configs keep working.
+> **Migrating from PrintWatch Card (or an older install of this fork)?** The card is now
+> `custom:printdeck-card` and the resource file is `printdeck-card.js`. The old
+> `custom:printwatch-card` tag still works as a legacy alias for this release, but the resource
+> URL must point at the new file — see [Installation](#installation).
 
 ## What the fork changes vs upstream
 
@@ -45,21 +45,21 @@ Full details in the [CHANGELOG](CHANGELOG.md).
 ### HACS (custom repository)
 
 1. HACS → three-dot menu → **Custom repositories**
-2. Add `https://github.com/bbk1ng/printwatch-card` (type: Dashboard)
-3. Install **PrintDeck**; make sure the resource `/hacsfiles/printwatch-card/printwatch-card.js`
+2. Add `https://github.com/bbk1ng/printdeck-card` (type: Dashboard)
+3. Install **PrintDeck**; make sure the resource `/hacsfiles/printdeck-card/printdeck-card.js`
    (type: module) is registered
 4. Reload / clear browser cache if upgrading
 
 ### Manual
 
-Copy `dist/printwatch-card.js` to `config/www/` and add it as a dashboard resource (type: module).
+Copy `dist/printdeck-card.js` to `config/www/` and add it as a dashboard resource (type: module).
 
 ## Configuration
 
 Minimal config — `entity_prefix` derives every entity id as `{domain}.{prefix}_{suffix}`:
 
 ```yaml
-type: custom:printwatch-card
+type: custom:printdeck-card
 printer_name: P2S
 entity_prefix: bambulab_p2s
 ```
@@ -70,7 +70,7 @@ Find your prefix in Developer Tools → States (e.g. `sensor.bambulab_p2s_bed_te
 Any entity can be overridden individually; explicit keys always win over the prefix:
 
 ```yaml
-type: custom:printwatch-card
+type: custom:printdeck-card
 printer_name: P2S
 entity_prefix: bambulab_p2s
 camera_refresh_rate: 1000                    # ms, default 1000
@@ -143,7 +143,7 @@ printer's entities.
 | A1 / A1 mini / X1 / X1C | ❓ Untested — expected to work if entity naming matches; overrides available if not |
 
 **Have one of the untested models?** Please try it and
-[open an issue](https://github.com/bbk1ng/printwatch-card/issues) saying what worked — a config
+[open an issue](https://github.com/bbk1ng/printdeck-card/issues) saying what worked — a config
 snippet and your entity list is enough. Confirmations (and fixes) move a model to ✅.
 [CONTRIBUTING](CONTRIBUTING.md) has a step-by-step way to check your printer's entities against
 what the card expects.
@@ -159,7 +159,7 @@ Upstream screenshots (P1S era) — UI is largely unchanged:
 
 ```bash
 npm install
-npm run build        # dist/printwatch-card.js (version injected from package.json)
+npm run build        # dist/printdeck-card.js (version injected from package.json)
 npm test             # node --test suite
 npm run watch        # unminified rebuild on change; set HA_WWW_DEST to auto-copy into HA
 python3 scripts/phase2-entity-check.py --prefix <your_prefix>   # diff live HA entities vs expected

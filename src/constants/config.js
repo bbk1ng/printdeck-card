@@ -1,5 +1,5 @@
 /**
- * Default configuration for the PrintWatch card.
+ * Default configuration for the PrintDeck card.
  * Entity slots default empty — use `entity_prefix` or explicit `*_entity` keys.
  * No foreign printer serials (A1).
  */

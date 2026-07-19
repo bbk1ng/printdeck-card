@@ -15,7 +15,7 @@
   },
   "ui": {
     "card": {
-      "printwatch": {
+      "printdeck": {
         "not_printing": "Not currently printing",
         "last_print": "Last print: {name}",
         "printer_offline": "Printer offline",

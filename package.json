@@ -1,9 +1,9 @@
 {
-  "name": "printwatch-card",
-  "version": "1.3.0",
+  "name": "printdeck-card",
+  "version": "1.4.0",
   "description": "PrintDeck — a Home Assistant card for Bambu Lab 3D printers (fork of PrintWatch Card)",
   "type": "module",
-  "main": "dist/printwatch-card.js",
+  "main": "dist/printdeck-card.js",
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c --watch",
