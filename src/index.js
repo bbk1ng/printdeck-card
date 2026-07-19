@@ -1,4 +1,9 @@
 import PrintDeckCard from './components/printdeck-card';
+import {
+  PRINTDECK_EDITOR_TAG,
+  PrintDeckCardEditor,
+  registerPrintDeckCard
+} from './components/printdeck-card-editor';
 import { html, css, LitElement } from 'lit';
 
 // Ensure global availability of Lit core functions
@@ -16,6 +21,14 @@ window.PRINTWATCH_BUILD_TIME = process.env.BUILD_TIMESTAMP;
 // Dev builds set PRINTDECK_TAG (e.g. printdeck-card-dev) so a sideloaded dev
 // bundle can coexist with the HACS-installed card without fighting over the tag.
 const TAG = process.env.PRINTDECK_TAG || 'printdeck-card';
+
+// Make the card discoverable in Lovelace's visual card picker.
+window.customCards = window.customCards || [];
+registerPrintDeckCard(window.customCards);
+
+if (!customElements.get(PRINTDECK_EDITOR_TAG)) {
+  customElements.define(PRINTDECK_EDITOR_TAG, PrintDeckCardEditor);
+}
 
 // Ensure the element is registered
 if (!customElements.get(TAG)) {
