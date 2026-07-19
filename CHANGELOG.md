@@ -18,8 +18,9 @@ filename remain `printwatch-card` for now — existing configs keep working).
   Explicit `*_entity` keys always override the prefix. Developed and verified against a
   Bambu Lab P2S.
 - Writable control entity slots, resolved from the prefix: `bed_target_number_entity`,
-  `nozzle_target_number_entity` (`number.*`), `speed_select_entity` (`select.*`),
-  plus `external_spool_entity` and `aux_fan_entity`.
+  `nozzle_target_number_entity` (`number.*`), `speed_select_entity` (`select.*`).
+- New read-only/toggle config slots: `external_spool_entity` (`sensor.*`) and
+  `aux_fan_entity` (`fan.*`).
 - Temperature dialogs with a range slider synced to the numeric input
   (bed 0–120 °C, nozzle 0–320 °C).
 - Speed dialog reads profile options from the live `select` entity's attributes instead of a

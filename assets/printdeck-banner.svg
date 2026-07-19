@@ -45,14 +45,14 @@
 
   <!-- title -->
   <text x="60" y="197" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="62" font-weight="bold" fill="url(#titleGrad)">printdeck</text>
-  <text x="64" y="230" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="14" fill="#69746e">bbk1ng/printdeck-card</text>
+  <text x="64" y="230" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="14" fill="#69746e">bbk1ng/printwatch-card</text>
 
   <!-- tagline -->
   <text x="64" y="288" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="17" fill="#c7cfca">Monitor &amp; control Bambu Lab printers</text>
   <text x="64" y="314" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="17" fill="#c7cfca">from your Home Assistant dashboard.</text>
 
   <!-- install line -->
-  <text x="64" y="366" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="14"><tspan fill="#5c665f">$ </tspan><tspan fill="#9aa49e">hacs add </tspan><tspan fill="#2fd96b">bbk1ng/printdeck-card</tspan></text>
+  <text x="64" y="366" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="14"><tspan fill="#9aa49e">HACS &#8594; Custom repositories &#8594; </tspan><tspan fill="#2fd96b">bbk1ng/printwatch-card</tspan></text>
 
   <!-- ============ right: mini card mockup ============ -->
   <g filter="url(#softShadow)">

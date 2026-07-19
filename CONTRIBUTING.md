@@ -15,7 +15,8 @@ npm run watch     # unminified rebuild on change; set HA_WWW_DEST=/path/to/ha/co
 npm test          # node --test suite — must pass before a PR
 ```
 
-Code style: Prettier + ESLint (configs in repo). Keep PRs focused on a single change.
+Code style: Prettier + ESLint are dev dependencies (`npm run lint`), but no shared config files
+are committed yet — match the style of surrounding code. Keep PRs focused on a single change.
 
 ## Confirming your printer model 🖨️
 

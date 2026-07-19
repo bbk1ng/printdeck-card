@@ -12,9 +12,10 @@ A Home Assistant Lovelace card to monitor **and control** Bambu Lab 3D printers.
 > adds working print controls, and is actively developed against a Bambu Lab **P2S**.
 > Licensed MIT, same as upstream (see [LICENSE](LICENSE)).
 
-> **Naming note:** the card was recently renamed from PrintWatch to PrintDeck. The custom element
-> and resource file are still `custom:printwatch-card` / `printwatch-card.js` until the code rename
-> lands — existing dashboard configs keep working.
+> **Naming note:** the card was recently renamed from PrintWatch to PrintDeck. The code rename
+> hasn't landed yet: the repo URL, custom element (`custom:printwatch-card`), resource file
+> (`printwatch-card.js`), console version banner, and dialog version tag all still say
+> `printwatch` — existing dashboard configs keep working.
 
 ## What the fork changes vs upstream
 
