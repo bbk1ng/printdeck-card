@@ -41,6 +41,15 @@ export const ENTITY_SLOTS = {
 };
 
 /**
+ * Multi-AMS tray keys (slot 5–16): supported as flat `*_entity` / `overrides.<key>`
+ * only — not prefix-derived (see README).
+ * @type {readonly string[]}
+ */
+export const MULTI_AMS_OVERRIDE_KEYS = Object.freeze(
+  Array.from({ length: 12 }, (_, i) => `ams_slot${i + 5}_entity`)
+);
+
+/**
  * Build entity id from prefix + slot table entry.
  * @param {string} prefix
  * @param {{ domain: string, suffix: string }} slot
@@ -59,7 +68,8 @@ export const isExplicitEntity = (value) =>
 
 /**
  * Resolve card config: flat *_entity > overrides.<key> > prefix table > empty.
- * YAML-only `overrides:` map uses the same keys as flat `*_entity` slots.
+ * YAML-only `overrides:` map uses the same keys as flat `*_entity` slots,
+ * including multi-AMS `ams_slot5_entity`–`ams_slot16_entity` (no prefix derive).
  * Does not inject foreign P1S serials.
  *
  * @param {Record<string, unknown>} rawConfig
@@ -89,6 +99,14 @@ export const resolveConfig = (rawConfig = {}) => {
       if (config[key] === undefined || config[key] === null) {
         config[key] = '';
       }
+    }
+  }
+
+  // Multi-AMS slots 5–16: flat > overrides only (no prefix derivation)
+  for (const key of MULTI_AMS_OVERRIDE_KEYS) {
+    if (isExplicitEntity(config[key])) continue;
+    if (isExplicitEntity(overrides[key])) {
+      config[key] = overrides[key];
     }
   }
 

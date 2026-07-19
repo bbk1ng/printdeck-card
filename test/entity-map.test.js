@@ -117,6 +117,30 @@ test('empty-string override does not beat prefix (same as empty flat key)', () =
   assert.equal(cfg.bed_temp_entity, 'sensor.bambulab_p2s_bed_temperature');
 });
 
+test('overrides applies multi-AMS ams_slot5–16 (not only ENTITY_SLOTS)', () => {
+  const cfg = resolveConfig({
+    entity_prefix: 'bambulab_p2s',
+    overrides: {
+      ams_slot5_entity: 'sensor.ams_tray_5',
+      ams_slot16_entity: 'sensor.ams_tray_16'
+    }
+  });
+  assert.equal(cfg.ams_slot5_entity, 'sensor.ams_tray_5');
+  assert.equal(cfg.ams_slot16_entity, 'sensor.ams_tray_16');
+  // slots 1–4 still prefix-derived when not overridden
+  assert.equal(cfg.ams_slot1_entity, 'sensor.bambulab_p2s_ams_tray_1');
+});
+
+test('flat multi-AMS key beats overrides.ams_slotN_entity', () => {
+  const cfg = resolveConfig({
+    ams_slot5_entity: 'sensor.flat_ams_5',
+    overrides: {
+      ams_slot5_entity: 'sensor.override_ams_5'
+    }
+  });
+  assert.equal(cfg.ams_slot5_entity, 'sensor.flat_ams_5');
+});
+
 test('no prefix + no entity keys → no P1S serial strings', () => {
   const cfg = resolveConfig({ printer_name: 'X' });
   const blob = JSON.stringify(cfg);
