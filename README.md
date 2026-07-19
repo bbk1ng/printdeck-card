@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/printdeck-banner.png" alt="PrintDeck — Bambu Lab printer card for Home Assistant" width="820">
+  <img src="https://raw.githubusercontent.com/bbk1ng/printdeck-card/main/assets/printdeck-banner.png" alt="PrintDeck — Bambu Lab printer card for Home Assistant" width="820">
 </p>
 
 # PrintDeck
