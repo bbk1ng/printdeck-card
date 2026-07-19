@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrintDeck compact — 3 proposals</title>
+<style>
+  :root {
+    --card-background-color: #1c1c1e;
+    --primary-text-color: #e8e8ea;
+    --secondary-text-color: #9a9aa0;
+    --primary-color: #03a9f4;
+    --divider-color: #2e2e32;
+    --state-active-color: #4caf50;
+    --page-bg: #111113;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --card-background-color: #ffffff;
+      --primary-text-color: #1c1c1e;
+      --secondary-text-color: #66666e;
+      --divider-color: #e2e2e6;
+      --page-bg: #f2f2f5;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--page-bg);
+    color: var(--primary-text-color);
+    font: 14px/1.4 system-ui, "Segoe UI", Roboto, sans-serif;
+    display: grid;
+    gap: 40px;
+    justify-content: center;
+    padding: 40px 16px 80px;
+  }
+  .proposal { width: min(420px, 94vw); }
+  .proposal > h2 {
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--primary-color);
+    margin-bottom: 4px;
+  }
+  .proposal > p {
+    font-size: 0.8rem; color: var(--secondary-text-color); margin-bottom: 12px;
+  }
+  .card {
+    background: var(--card-background-color);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  }
+  .badge {
+    font-size: 9px; font-weight: 700; letter-spacing: .5px;
+    padding: 1px 5px; border-radius: 7px; vertical-align: middle;
+    background: #ff9800; color: #000; margin-left: 6px;
+  }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ── A: status ring ─────────────────────────── */
+  .a-top { display: flex; align-items: center; gap: 12px; }
+  .ring {
+    width: 46px; height: 46px; border-radius: 50%;
+    background:
+      radial-gradient(closest-side, var(--card-background-color) 74%, transparent 75% 100%),
+      conic-gradient(var(--state-active-color) 67%, var(--divider-color) 0);
+    display: grid; place-items: center;
+    font-size: 11px; font-weight: 700;
+    flex: none;
+  }
+  .a-title { flex: 1; min-width: 0; }
+  .a-name { font-size: 16px; font-weight: 600; }
+  .a-sub { font-size: 12px; color: var(--secondary-text-color); }
+  .a-controls { display: flex; gap: 4px; }
+  .icon-btn {
+    width: 30px; height: 30px; border-radius: 8px; border: none;
+    background: transparent; color: var(--secondary-text-color);
+    font-size: 15px; display: grid; place-items: center; cursor: pointer;
+  }
+  .icon-btn.active { color: var(--primary-color); background: color-mix(in srgb, var(--primary-color) 14%, transparent); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; padding: 4px 9px; border-radius: 999px;
+    background: color-mix(in srgb, var(--primary-text-color) 6%, transparent);
+  }
+  .chip .lbl { color: var(--secondary-text-color); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+  .a-ams { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+  .slot-dot {
+    width: 18px; height: 18px; border-radius: 50%; position: relative; flex: none;
+  }
+  .slot-dot::after {
+    content: ""; position: absolute; inset: -3px; border-radius: 50%;
+    background: conic-gradient(var(--primary-text-color) calc(var(--fill) * 1%), transparent 0);
+    mask: radial-gradient(closest-side, transparent 78%, #000 79%);
+    opacity: .55;
+  }
+  .a-ams .meta { font-size: 11px; color: var(--secondary-text-color); margin-left: auto; }
+
+  /* ── B: console grid ────────────────────────── */
+  .b-head { display: flex; align-items: baseline; gap: 8px; border-bottom: 1px solid var(--divider-color); padding-bottom: 8px; }
+  .b-name { font-size: 15px; font-weight: 650; }
+  .b-state { font-size: 11px; color: var(--state-active-color); text-transform: uppercase; letter-spacing: .08em; }
+  .b-eta { margin-left: auto; font-size: 12px; color: var(--secondary-text-color); }
+  .b-bar { height: 3px; background: var(--divider-color); border-radius: 2px; margin: 8px 0 10px; overflow: hidden; }
+  .b-bar > i { display: block; height: 100%; width: 67%; background: var(--state-active-color); }
+  .b-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px 18px;
+    font-size: 12.5px;
+  }
+  .b-grid .row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dotted var(--divider-color); }
+  .b-grid .k { color: var(--secondary-text-color); }
+  .b-foot { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+  .sq { width: 14px; height: 14px; border-radius: 3px; flex: none; }
+  .b-foot .pct { font-size: 10px; color: var(--secondary-text-color); margin-right: 6px; }
+  .b-foot .spacer { flex: 1; }
+
+  /* ── C: filament ribbon ─────────────────────── */
+  .c-head { display: flex; align-items: center; }
+  .c-name { font-size: 16px; font-weight: 600; }
+  .c-state { margin-left: auto; font-size: 12px; color: var(--state-active-color); }
+  .c-task { font-size: 12px; color: var(--secondary-text-color); margin-top: 2px; }
+  .c-progress { position: relative; height: 26px; border-radius: 7px; overflow: hidden; margin-top: 10px; background: color-mix(in srgb, var(--primary-text-color) 7%, transparent); }
+  .c-progress > i { position: absolute; inset: 0 auto 0 0; width: 67%; background: color-mix(in srgb, var(--state-active-color) 82%, transparent); }
+  .c-progress span { position: relative; display: flex; height: 100%; align-items: center; justify-content: space-between; padding: 0 10px; font-size: 12px; font-weight: 600; }
+  .c-temps { display: flex; gap: 16px; margin-top: 10px; font-size: 13px; }
+  .c-temps .t { display: flex; flex-direction: column; }
+  .c-temps .t small { font-size: 10px; color: var(--secondary-text-color); text-transform: uppercase; letter-spacing: .05em; }
+  .c-temps .controls { margin-left: auto; display: flex; gap: 4px; align-self: center; }
+  .ribbon { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-top: 12px; }
+  .ribbon > i { height: 100%; }
+  .c-ams-meta { display: flex; font-size: 11px; color: var(--secondary-text-color); margin-top: 5px; gap: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ═══ A ═══ -->
+<section class="proposal">
+  <h2>A · Status ring</h2>
+  <p>Progress ring replaces bar+percent+layer block. Everything else chips. ~150px tall.</p>
+  <div class="card">
+    <div class="a-top">
+      <div class="ring num">67%</div>
+      <div class="a-title">
+        <div class="a-name">P2S<span class="badge">DEV 1.4.0-dev</span></div>
+        <div class="a-sub num">Printing · layer 142/213 · 1h 24m left</div>
+      </div>
+      <div class="a-controls">
+        <button class="icon-btn active" title="Chamber light">💡</button>
+        <button class="icon-btn" title="Pause">⏸</button>
+        <button class="icon-btn" title="Stop">⏹</button>
+      </div>
+    </div>
+    <div class="chips num">
+      <span class="chip"><span class="lbl">bed</span> 65→80°</span>
+      <span class="chip"><span class="lbl">nozzle</span> 220°</span>
+      <span class="chip"><span class="lbl">speed</span> Standard</span>
+      <span class="chip"><span class="lbl">ams</span> 42% · 28°</span>
+    </div>
+    <div class="a-ams">
+      <span class="slot-dot" style="background:#c0392b; --fill:82"></span>
+      <span class="slot-dot" style="background:#f5f5f0; --fill:34"></span>
+      <span class="slot-dot" style="background:#2c3e50; --fill:91"></span>
+      <span class="slot-dot" style="background:#27ae60; --fill:12"></span>
+      <span class="meta">AMS 2 Pro · not drying</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ B ═══ -->
+<section class="proposal">
+  <h2>B · Console grid</h2>
+  <p>Two-column metric grid, printer-console feel. Densest — scales best with new sensors. ~190px.</p>
+  <div class="card">
+    <div class="b-head">
+      <span class="b-name">P2S<span class="badge">DEV</span></span>
+      <span class="b-state">Printing</span>
+      <span class="b-eta num">67% · 1h 24m</span>
+    </div>
+    <div class="b-bar"><i></i></div>
+    <div class="b-grid num">
+      <div class="row"><span class="k">Bed</span><span>65 → 80°</span></div>
+      <div class="row"><span class="k">Nozzle</span><span>220°</span></div>
+      <div class="row"><span class="k">Layer</span><span>142 / 213</span></div>
+      <div class="row"><span class="k">Speed</span><span>Standard</span></div>
+      <div class="row"><span class="k">AMS hum.</span><span>42%</span></div>
+      <div class="row"><span class="k">AMS temp</span><span>28°</span></div>
+    </div>
+    <div class="b-foot">
+      <span class="sq" style="background:#c0392b"></span><span class="pct num">82</span>
+      <span class="sq" style="background:#f5f5f0"></span><span class="pct num">34</span>
+      <span class="sq" style="background:#2c3e50"></span><span class="pct num">91</span>
+      <span class="sq" style="background:#27ae60"></span><span class="pct num">12</span>
+      <span class="spacer"></span>
+      <button class="icon-btn active">💡</button>
+      <button class="icon-btn">⏸</button>
+      <button class="icon-btn">⏹</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ C ═══ -->
+<section class="proposal">
+  <h2>C · Filament ribbon</h2>
+  <p>Fat progress bar is the hero; AMS becomes a filament ribbon (width = remaining). ~170px.</p>
+  <div class="card">
+    <div class="c-head">
+      <span class="c-name">P2S<span class="badge">DEV</span></span>
+      <span class="c-state">Printing</span>
+    </div>
+    <div class="c-task">benchy_final_v3.3mf</div>
+    <div class="c-progress num"><i></i><span><b>67%</b> <span>layer 142/213 · 1h 24m</span></span></div>
+    <div class="c-temps num">
+      <div class="t"><small>bed</small>65→80°</div>
+      <div class="t"><small>nozzle</small>220°</div>
+      <div class="t"><small>speed</small>Std</div>
+      <div class="t"><small>ams</small>42%·28°</div>
+      <div class="controls">
+        <button class="icon-btn active">💡</button>
+        <button class="icon-btn">⏸</button>
+        <button class="icon-btn">⏹</button>
+      </div>
+    </div>
+    <div class="ribbon">
+      <i style="background:#c0392b; width:38%"></i>
+      <i style="background:#f5f5f0; width:16%"></i>
+      <i style="background:#2c3e50; width:41%"></i>
+      <i style="background:#27ae60; width:5%"></i>
+    </div>
+    <div class="c-ams-meta num"><span>PLA·82%</span><span>PLA·34%</span><span>PETG·91%</span><span>PLA·12%</span><span style="margin-left:auto">AMS 42% RH</span></div>
+  </div>
+</section>
+
+<!-- ═══ D · LOCKED ═══ -->
+<section class="proposal">
+  <h2>D · Hybrid (locked)</h2>
+  <p>B's console grid + C's filament ribbon. This is the compact layout target.</p>
+  <div class="card">
+    <div class="b-head">
+      <span class="b-name">P2S<span class="badge">DEV</span></span>
+      <span class="b-state">Printing</span>
+      <span class="b-eta num">67% · 1h 24m</span>
+    </div>
+    <div class="b-bar"><i></i></div>
+    <div class="b-grid num">
+      <div class="row"><span class="k">Bed</span><span>65 → 80°</span></div>
+      <div class="row"><span class="k">Nozzle</span><span>220°</span></div>
+      <div class="row"><span class="k">Layer</span><span>142 / 213</span></div>
+      <div class="row"><span class="k">Speed</span><span>Standard</span></div>
+      <div class="row"><span class="k">AMS hum.</span><span>42%</span></div>
+      <div class="row"><span class="k">AMS temp</span><span>28°</span></div>
+    </div>
+    <div class="ribbon" style="margin-top:12px">
+      <i style="background:#c0392b; width:38%"></i>
+      <i style="background:#f5f5f0; width:16%"></i>
+      <i style="background:#2c3e50; width:41%"></i>
+      <i style="background:#27ae60; width:5%"></i>
+    </div>
+    <div class="c-ams-meta num">
+      <span>PLA·82%</span><span>PLA·34%</span><span>PETG·91%</span><span>PLA·12%</span>
+      <span style="margin-left:auto;display:flex;gap:4px">
+        <button class="icon-btn active">💡</button>
+        <button class="icon-btn">⏸</button>
+        <button class="icon-btn">⏹</button>
+      </span>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
