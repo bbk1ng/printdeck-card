@@ -1,155 +1,180 @@
-# PrintWatch Card
+<p align="center">
+  <img src="assets/printdeck-banner.png" alt="PrintDeck — Bambu Lab printer card for Home Assistant" width="820">
+</p>
 
-A feature-rich Home Assistant card for monitoring and controlling your P1S 3D printer. Get real-time updates on print progress, temperatures, material status, and more with a sleek, user-friendly interface.
+# PrintDeck
 
-### Light Mode 
-![PrintWatch Card Screenshot](assets/light-mode-min.png)
+A Home Assistant Lovelace card to monitor **and control** Bambu Lab 3D printers.
 
-### Dark Mode
-![PrintWatch Dark Mode](assets/dark-mode-min.png)  
+> **PrintDeck is a hard fork of [PrintWatch Card](https://github.com/drkpxl/printwatch-card) by Steven Hubert ([@drkpxl](https://github.com/drkpxl)).**
+> The original card provided the UI, monitoring features, and overall design — full credit to Steven.
+> The fork replaces the hardcoded single-printer entity wiring with config-driven entity resolution,
+> adds working print controls, and is actively developed against a Bambu Lab **P2S**.
+> Licensed MIT, same as upstream (see [LICENSE](LICENSE)).
 
-### German Example
-![PrintWatch Nord](assets/german.png)
+> **Naming note:** the card was recently renamed from PrintWatch to PrintDeck. The custom element
+> and resource file are still `custom:printwatch-card` / `printwatch-card.js` until the code rename
+> lands — existing dashboard configs keep working.
 
-## Features
+## What the fork changes vs upstream
 
-- 🎥 Live camera feed with configurable refresh rate
-- 📊 Print progress tracking with layer count and estimated completion time
-- 🎨 AMS/Material status visualization including current filament
-- 💡 Quick controls for chamber light and auxiliary fan
-- ⏯️ Print control buttons (pause/resume/stop) with [confirmation dialogs](assets/pause.png)
-- 🎛️ Speed profile monitoring and control
-- ⚡ Local API (LAN Mode)
-- 🌑 Native Theme support
-- 🌡️ Real-time temperature monitoring and control for bed and nozzle
-- 📷 G-Code preview image (requires HA Bambu Lab plugin update)
-- 🏷️ Display print weight and length details
--🌍 Localization support (initial translations in German, more contributions welcome!)
-pa
-## Prerequisites
+- **Any printer, not one hardcoded P1S** — upstream baked one P1S serial number into every entity id.
+  PrintDeck resolves entities from a single `entity_prefix` (e.g. `bambulab_p2s`), with per-entity
+  overrides for anything that doesn't match.
+- **Print controls that work** — pause/resume/stop, bed & nozzle target temperature (slider dialog),
+  print-speed profile — wired to the writable `button.*`/`number.*`/`select.*` entities and
+  automatically hidden when your setup doesn't expose them (see [Capabilities](#capabilities)).
+- **Reliable dialogs** — replaced Home Assistant's lazy-loaded `ha-dialog`/`ha-textfield`/`mwc-button`
+  (which frequently render empty on dashboard views) with the card's own overlay dialogs and native
+  inputs.
+- **Robustness** — camera feed survives printer power-off and recovers without a page reload,
+  missing values render `---` instead of `NaN`, AMS + external-spool state merging fixed.
+- **Tests** — upstream shipped none; the fork has a `node --test` suite covering entity resolution,
+  control gating, camera helpers, and state merging.
 
-- Home Assistant
-- P1S Printer integration configured in Home Assistant using [ha-bambulab]((https://github.com/greghesp/ha-bambulab)) plugin
-- Required entities set up (see Configuration section)
-- Image sensor toggle turned on
+Full details in the [CHANGELOG](CHANGELOG.md).
 
-![Image Screenshot](assets/image-toggle.png)
+## Requirements
 
+- Home Assistant with the [ha-bambulab](https://github.com/greghesp/ha-bambulab) integration
+- A Bambu Lab printer (see [Printer support](#printer-support))
 
 ## Installation
 
-### HACS (Recommended) - Awaiting approval from HACS, follow manual
+### HACS (custom repository)
 
-1. Open HACS in Home Assistant
-2. Click on "Frontend" section
-3. Click the "+ Explore & Download Repositories" button
-4. Search for "PrintWatch Card"
-5. Click "Download"
-6. Restart Home Assistant
+1. HACS → three-dot menu → **Custom repositories**
+2. Add `https://github.com/bbk1ng/printwatch-card` (type: Dashboard)
+3. Install **PrintDeck**; make sure the resource `/hacsfiles/printwatch-card/printwatch-card.js`
+   (type: module) is registered
+4. Reload / clear browser cache if upgrading
 
-### Manual Installation
+### Manual
 
-1. Navigate to HACS
-2. Tap 3 buttons in top right and select custom repositories
-3. Paste `https://github.com/drkpxl/printwatch-card` and select `dashboard`
-4. Save
-5. Select printwatch-card in HACS listing and click download
-6. Navigate to settings and install card if needed there.
-7. Restart Home Assistant
-8. Clear Browser cache if using previous version
+Copy `dist/printwatch-card.js` to `config/www/` and add it as a dashboard resource (type: module).
 
 ## Configuration
 
-Add the card to your dashboard with this basic configuration:
-
-
-## Configuration
-
-Add the card to your dashboard with this basic configuration:
+Minimal config — `entity_prefix` derives every entity id as `{domain}.{prefix}_{suffix}`:
 
 ```yaml
 type: custom:printwatch-card
-printer_name: P1S
-camera_refresh_rate: 1000  # Refresh rate in milliseconds (1 second)
-print_status_entity: sensor.p1s_print_status
-current_stage_entity: sensor.p1s_current_stage
-task_name_entity: sensor.p1s_task_name
-progress_entity: sensor.p1s_print_progress
-current_layer_entity: sensor.p1s_current_layer
-total_layers_entity: sensor.p1s_total_layer_count
-remaining_time_entity: sensor.p1s_remaining_time
-bed_temp_entity: sensor.p1s_bed_temperature
-nozzle_temp_entity: sensor.p1s_nozzle_temperature
-bed_target_temp_entity: number.p1s_bed_target_temperature
-nozzle_target_temp_entity: number.p1s_nozzle_target_temperature
-speed_profile_entity: select.p1s_printing_speed
-ams_slot1_entity: sensor.p1s_ams_tray_1
-ams_slot2_entity: sensor.p1s_ams_tray_2
-ams_slot3_entity: sensor.p1s_ams_tray_3
-ams_slot4_entity: sensor.p1s_ams_tray_4
-ams_slot5_entity: sensor.p1s_ams_tray_5
-...
-camera_entity: image.p1s_camera
-cover_image_entity: image.p1s_cover_image
-pause_button_entity: button.p1s_pause_printing
-resume_button_entity: button.p1s_resume_printing
-stop_button_entity: button.p1s_stop_printing
-chamber_light_entity: light.p1s_chamber_light
-aux_fan_entity: fan.p1s_aux_fan
-print_weight_entity: sensor.p1s_print_weight
-print_length_entity: sensor.p1s_print_length
+printer_name: P2S
+entity_prefix: bambulab_p2s
 ```
 
+Find your prefix in Developer Tools → States (e.g. `sensor.bambulab_p2s_bed_temperature`
+→ prefix is `bambulab_p2s`).
 
-## Troubleshooting
+Any entity can be overridden individually; explicit keys always win over the prefix:
 
-### Common Issues
+```yaml
+type: custom:printwatch-card
+printer_name: P2S
+entity_prefix: bambulab_p2s
+camera_refresh_rate: 1000                    # ms, default 1000
+camera_entity: camera.bambulab_p2s_camera    # example override
+```
 
-1. **Card not appearing**
-   - Check that all required entities exist and are correctly named
-   - Verify resources are properly loaded in HA
+<details>
+<summary>All config keys and their prefix-derived defaults</summary>
 
-2. **Camera feed not updating**
-   - Ensure camera entity is properly configured
-   - Check that image updates are enabled in HA
-   - You must toggle on "use image sensor camera" in the ha-bambulab plugin
+| Key | Derived from `entity_prefix` |
+|---|---|
+| `print_status_entity` | `sensor.{prefix}_print_status` |
+| `current_stage_entity` | `sensor.{prefix}_current_stage` |
+| `task_name_entity` | `sensor.{prefix}_task_name` |
+| `progress_entity` | `sensor.{prefix}_print_progress` |
+| `current_layer_entity` | `sensor.{prefix}_current_layer` |
+| `total_layers_entity` | `sensor.{prefix}_total_layer_count` |
+| `remaining_time_entity` | `sensor.{prefix}_remaining_time` |
+| `bed_temp_entity` | `sensor.{prefix}_bed_temperature` |
+| `nozzle_temp_entity` | `sensor.{prefix}_nozzle_temperature` |
+| `bed_target_temp_entity` | `sensor.{prefix}_bed_target_temperature` |
+| `nozzle_target_temp_entity` | `sensor.{prefix}_nozzle_target_temperature` |
+| `speed_profile_entity` | `sensor.{prefix}_speed_profile` |
+| `ams_slot1_entity` … `ams_slot4_entity` | `sensor.{prefix}_ams_tray_1` … `_4` |
+| `ams_slot5_entity` … `ams_slot16_entity` | *(not derived — set explicitly for multi-AMS)* |
+| `external_spool_entity` | `sensor.{prefix}_external_spool_external_spool` |
+| `camera_entity` | `camera.{prefix}_camera` |
+| `cover_image_entity` | `image.{prefix}_cover_image` |
+| `pause_button_entity` / `resume_button_entity` / `stop_button_entity` | `button.{prefix}_pause` / `_resume` / `_stop` |
+| `chamber_light_entity` | `light.{prefix}_chamber_light` |
+| `aux_fan_entity` | `fan.{prefix}_aux_fan` |
+| `bed_target_number_entity` | `number.{prefix}_bed_target_temperature` *(writable)* |
+| `nozzle_target_number_entity` | `number.{prefix}_nozzle_target_temperature` *(writable)* |
+| `speed_select_entity` | `select.{prefix}_printing_speed` *(writable)* |
+| `online_entity` | `binary_sensor.{prefix}_online` *(absent → treated as online)* |
+| `print_weight_entity` / `print_length_entity` | `sensor.{prefix}_print_weight` / `_print_length` |
 
-![Image Screenshot](assets/image-toggle.png)
+</details>
 
-3. **Controls not working**
-   - Verify that your user has proper permissions for the entities
-   - Check that button entities are available and not in an error state
+## Capabilities
 
-4. **G-Code preview not appearing**
-   - Ensure you have the latest version of the HA Bambu Lab plugin
-   - Enable G-Code preview in the plugin settings
-5. **Localization issues**
-   - Some translations are AI-generated; if you notice errors, consider submitting improvements!
+What you get depends on your **ha-bambulab setup**, not on card flags — the card checks which
+entities actually exist in Home Assistant and shows/hides features accordingly.
 
+| Feature | Requirement |
+|---|---|
+| Progress, layers, temperatures, remaining time, AMS spools, weight/length | ha-bambulab sensors (any mode) |
+| Live camera feed | `camera.*` entity exposed by the integration |
+| G-code/cover preview | `image.*` cover entity (model/version dependent) |
+| Pause / resume / stop | `button.*` entities — **cloud mode, or LAN with Developer Mode** |
+| Bed / nozzle target temp (slider dialog) | writable `number.*` entities — same requirement |
+| Speed profile (silent/standard/sport/ludicrous) | writable `select.*` entity — same requirement |
+| Chamber light / aux fan toggles | `light.*` / `fan.*` entities present |
 
-## Contributing
+**LAN mode without Developer Mode:** ha-bambulab cannot create the control entities
+(`mqtt_signature_required`), so the card shows monitoring only — controls disappear rather than
+render broken. Enable Developer Mode on the printer (or use cloud mode) to get controls.
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+Translations: English, German. Theming: fully inherited from your HA theme (dark mode included).
 
-## Support
+## Printer support
 
-If you're having issues, please:
-1. Check the Troubleshooting section above
-2. Search existing [GitHub issues](https://github.com/yourusername/printwatch-card/issues)
-3. Create a new issue if your problem isn't already reported
+The card contains no per-model code — support is a function of how ha-bambulab names your
+printer's entities.
+
+| Printer | Status |
+|---|---|
+| **P2S** | ✅ Tested — developed and verified against a real P2S (entities, controls, LAN/cloud gating) |
+| P1S / P1P | ⚠️ Should work via `entity_prefix` (upstream's original target) — unconfirmed since the rework |
+| A1 / A1 mini / X1 / X1C | ❓ Untested — expected to work if entity naming matches; overrides available if not |
+
+**Have one of the untested models?** Please try it and
+[open an issue](https://github.com/bbk1ng/printwatch-card/issues) saying what worked — a config
+snippet and your entity list is enough. Confirmations (and fixes) move a model to ✅.
+[CONTRIBUTING](CONTRIBUTING.md) has a step-by-step way to check your printer's entities against
+what the card expects.
+
+## Screenshots
+
+Upstream screenshots (P1S era) — UI is largely unchanged:
+
+![Dark mode](assets/dark-mode-min.png)
+![Light mode](assets/light-mode-min.png)
+
+## Development
+
+```bash
+npm install
+npm run build        # dist/printwatch-card.js (version injected from package.json)
+npm test             # node --test suite
+npm run watch        # unminified rebuild on change; set HA_WWW_DEST to auto-copy into HA
+python3 scripts/phase2-entity-check.py --prefix <your_prefix>   # diff live HA entities vs expected
+```
+
+## Credits
+
+- **Steven Hubert ([@drkpxl](https://github.com/drkpxl))** — author of the original
+  [PrintWatch Card](https://github.com/drkpxl/printwatch-card): the card's design, UI, and all
+  pre-fork features. Upstream changelog preserved in [CHANGELOG](CHANGELOG.md).
+  If PrintDeck is useful to you, consider
+  [buying Steven a coffee](https://www.buymeacoffee.com/drkpxl).
+- [Greg Hesp](https://github.com/greghesp) — [ha-bambulab](https://github.com/greghesp/ha-bambulab),
+  the integration this card is built on.
+- German translations originate upstream (partly AI-generated — corrections welcome).
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- [Greg Hesp](https://github.com/greghesp/ha-bambulab) maker of [ha-bambulab]((https://github.com/greghesp/ha-bambulab)) without this plugin wouldn't work
-- Thanks to all P1S users who provided feedback and testing
-- Inspired by the great Home Assistant community
-
----
-
-If you find this useful I am addicted to good coffee.
-
-<a href="https://www.buymeacoffee.com/drkpxl" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 160px !important;" ></a>
+[MIT](LICENSE) — both the original work and this fork.

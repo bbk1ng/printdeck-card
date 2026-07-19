@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file.
 
+Entries up to and including 1.2.0 are from the original
+[PrintWatch Card](https://github.com/drkpxl/printwatch-card) by Steven Hubert
+([@drkpxl](https://github.com/drkpxl)). Entries from 1.3.0 onward are the
+PrintDeck fork ([bbk1ng/printwatch-card](https://github.com/bbk1ng/printwatch-card)).
+
+## [1.3.0] - 2026-07-19 — PrintDeck fork
+
+First fork release. Renamed the project to **PrintDeck** (custom element and resource
+filename remain `printwatch-card` for now — existing configs keep working).
+
+### Added
+- **Config-driven entity resolution**: new `entity_prefix` option derives every entity id as
+  `{domain}.{prefix}_{suffix}`, replacing config defaults hardcoded to one P1S serial number.
+  Explicit `*_entity` keys always override the prefix. Developed and verified against a
+  Bambu Lab P2S.
+- Writable control entity slots, resolved from the prefix: `bed_target_number_entity`,
+  `nozzle_target_number_entity` (`number.*`), `speed_select_entity` (`select.*`),
+  plus `external_spool_entity` and `aux_fan_entity`.
+- Temperature dialogs with a range slider synced to the numeric input
+  (bed 0–120 °C, nozzle 0–320 °C).
+- Speed dialog reads profile options from the live `select` entity's attributes instead of a
+  hardcoded list.
+- `camera.*` domain support for the live feed (P2S exposes `camera.*`; P1S-era `image.*`
+  still works via `cover_image_entity` / explicit override).
+- Presence-based control gating: pause/stop/temperature/speed/light/fan UI renders only when
+  the corresponding entity exists — LAN mode without Developer Mode (where ha-bambulab
+  creates no control entities) now shows a clean monitoring-only card instead of broken buttons.
+- Test suite (`npm test`, `node --test`): entity resolution, control gating, camera helpers,
+  AMS/state merging, formatters — 35 tests.
+- `scripts/phase2-entity-check.py`: diagnostic CLI that diffs a live HA instance's entities
+  against what the card expects for a given prefix.
+- `CARD_VERSION` console banner and dialog version tag; version injected from `package.json`
+  at build time (single source of truth).
+
+### Changed
+- All dialogs rebuilt on the card's own overlay implementation with native
+  `<input>`/`<select>`/`<button>` elements — replaces HA's lazy-loaded
+  `ha-dialog`/`ha-textfield`/`ha-select`/`mwc-button`, which frequently render empty on
+  dashboard views.
+- AMS + external spool merging rewritten: external spool no longer unconditionally wins,
+  `unknown`/`unavailable` slots filtered, only one slot can be active.
+- Print weight/length units read from each sensor's `unit_of_measurement` instead of
+  hardcoded P1S entity lookups.
+- Missing `online_entity` is now treated as online (camera feed no longer killed by an
+  unconfigured entity); camera/cover error states auto-clear when a new image arrives.
+- Missing numeric values render `---` instead of `NaN`/`undefined`.
+- Light/fan buttons are hidden entirely (not just disabled) when unavailable.
+- Build: dev watch mode skips minification; optional `HA_WWW_DEST` auto-deploy of the bundle.
+
+### Attribution
+- `LISCENSE` renamed to `LICENSE`; copyright credits Steven Hubert (original work) and
+  Boris Milinkovic (fork).
+
 ## [1.2.0] - 2024-02-2
 
 BREAKING CHANGES - Please update your YAML based on the README

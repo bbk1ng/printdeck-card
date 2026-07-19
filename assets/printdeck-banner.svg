@@ -1,0 +1,124 @@
+<svg width="920" height="462" viewBox="0 0 920 462" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#2fd96b"/>
+    </linearGradient>
+    <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#2fd96b"/>
+    </linearGradient>
+    <radialGradient id="glowRight" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#2fd96b" stop-opacity="0.13"/>
+      <stop offset="0.6" stop-color="#1f8f7a" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#0a0d0c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowLeft" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#0a0d0c" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <!-- background -->
+  <rect width="920" height="462" fill="#0a0d0c"/>
+  <ellipse cx="720" cy="230" rx="420" ry="300" fill="url(#glowRight)"/>
+  <ellipse cx="140" cy="80" rx="360" ry="240" fill="url(#glowLeft)"/>
+
+  <!-- ghost watch-ring motif bleeding off right edge -->
+  <g transform="translate(918,231)" opacity="0.55">
+    <circle r="150" fill="none" stroke="#151b18" stroke-width="20"/>
+    <path d="M 0 -150 A 150 150 0 0 1 129.9 75" fill="none" stroke="#17332a" stroke-width="20" stroke-linecap="round"/>
+    <circle r="96" fill="none" stroke="#121715" stroke-width="10"/>
+  </g>
+
+  <!-- ============ left column ============ -->
+  <!-- eyebrow -->
+  <g>
+    <rect x="64" y="106" width="15" height="15" rx="3.5" fill="#2fd96b"/>
+    <rect x="67.2" y="109.2" width="3.6" height="8.6" fill="#0a0d0c"/>
+    <rect x="72.2" y="109.2" width="3.6" height="5" fill="#0a0d0c"/>
+    <text x="90" y="118" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="11" font-weight="bold" letter-spacing="2.4" fill="#8b958f">BAMBU LAB &#183; HOME ASSISTANT &#183; LOVELACE CARD</text>
+  </g>
+
+  <!-- title -->
+  <text x="60" y="197" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="62" font-weight="bold" fill="url(#titleGrad)">printdeck</text>
+  <text x="64" y="230" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="14" fill="#69746e">bbk1ng/printdeck-card</text>
+
+  <!-- tagline -->
+  <text x="64" y="288" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="17" fill="#c7cfca">Monitor &amp; control Bambu Lab printers</text>
+  <text x="64" y="314" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="17" fill="#c7cfca">from your Home Assistant dashboard.</text>
+
+  <!-- install line -->
+  <text x="64" y="366" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="14"><tspan fill="#5c665f">$ </tspan><tspan fill="#9aa49e">hacs add </tspan><tspan fill="#2fd96b">bbk1ng/printdeck-card</tspan></text>
+
+  <!-- ============ right: mini card mockup ============ -->
+  <g filter="url(#softShadow)">
+    <rect x="560" y="66" width="300" height="330" rx="18" fill="#191d1b"/>
+    <rect x="560.5" y="66.5" width="299" height="329" rx="17.5" fill="none" stroke="#2b312e" stroke-width="1"/>
+  </g>
+
+  <!-- card header -->
+  <text x="584" y="106" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="20" font-weight="bold" fill="#f2f5f3">P2S</text>
+  <text x="584" y="124" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="12" fill="#2fd96b">printing</text>
+  <!-- header icons: light + fan -->
+  <g stroke="#79837d" stroke-width="1.6" fill="none">
+    <circle cx="806" cy="98" r="5"/>
+    <path d="M 803.8 103.5 h 4.4 M 804.6 106 h 2.8"/>
+    <g transform="translate(832,100)" fill="#79837d" stroke="none">
+      <ellipse cx="0" cy="-4.6" rx="2.4" ry="4" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-4.6" rx="2.4" ry="4" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-4.6" rx="2.4" ry="4" transform="rotate(240)"/>
+      <circle r="1.8" fill="#191d1b"/>
+    </g>
+  </g>
+
+  <!-- camera / printer window -->
+  <rect x="584" y="140" width="252" height="92" rx="10" fill="#101312"/>
+  <g>
+    <!-- gantry frame -->
+    <path d="M 640 158 h 140" stroke="#3a413d" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 646 158 v 60 M 774 158 v 60" stroke="#2c322f" stroke-width="3" stroke-linecap="round"/>
+    <!-- print head + nozzle -->
+    <rect x="694" y="152" width="32" height="13" rx="3" fill="#3a413d"/>
+    <path d="M 705 165 l 5 8 l 5 -8 z" fill="#5a635e"/>
+    <!-- extruded filament line -->
+    <path d="M 710 174 v 20" stroke="#2fd96b" stroke-width="2" stroke-dasharray="3 3"/>
+    <!-- printed object (benchy-ish hull) -->
+    <path d="M 688 218 l 6 -14 h 32 l 6 14 z" fill="#1f5c3c"/>
+    <path d="M 696 204 h 28 v -5 h -28 z" fill="#17402c"/>
+    <!-- build plate -->
+    <path d="M 656 218 h 108" stroke="#3a413d" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- progress -->
+  <text x="584" y="258" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="12" fill="#e8ece9">benchy.3mf</text>
+  <text x="836" y="258" text-anchor="end" font-family="Hack, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="bold" fill="#2fd96b">68%</text>
+  <rect x="584" y="266" width="252" height="8" rx="4" fill="#242927"/>
+  <rect x="584" y="266" width="171" height="8" rx="4" fill="url(#barGrad)"/>
+  <circle cx="755" cy="270" r="5" fill="#2fd96b" opacity="0.35"/>
+
+  <!-- temps row -->
+  <g text-anchor="middle" font-family="Hack, 'DejaVu Sans Mono', monospace">
+    <text x="626" y="308" font-size="18" font-weight="bold" fill="#f2f5f3">220&#176;</text>
+    <text x="626" y="324" font-size="10" fill="#79837d">Nozzle</text>
+    <text x="710" y="308" font-size="18" font-weight="bold" fill="#f2f5f3">65&#176;</text>
+    <text x="710" y="324" font-size="10" fill="#79837d">Bed</text>
+    <text x="794" y="308" font-size="18" font-weight="bold" fill="#f2f5f3">100%</text>
+    <text x="794" y="324" font-size="10" fill="#79837d">Speed</text>
+  </g>
+
+  <!-- controls + filament dots -->
+  <g>
+    <rect x="584" y="344" width="46" height="28" rx="8" fill="none" stroke="#2fd96b" stroke-width="1.4"/>
+    <path d="M 603 351.5 v 13 M 611 351.5 v 13" stroke="#2fd96b" stroke-width="3" stroke-linecap="round"/>
+    <rect x="640" y="344" width="46" height="28" rx="8" fill="none" stroke="#5c665f" stroke-width="1.4"/>
+    <rect x="658" y="353" width="10" height="10" rx="1.5" fill="#9aa49e"/>
+    <circle cx="770" cy="358" r="6" fill="#3b82f6"/>
+    <circle cx="792" cy="358" r="6" fill="#e5e7eb"/>
+    <circle cx="814" cy="358" r="6" fill="#8b5cf6"/>
+    <circle cx="836" cy="358" r="6" fill="#d946ef"/>
+  </g>
+</svg>
