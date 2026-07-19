@@ -13,15 +13,19 @@ window.PRINTDECK_BUILD_TIME = process.env.BUILD_TIMESTAMP;
 window.PRINTWATCH_VERSION = process.env.VERSION;
 window.PRINTWATCH_BUILD_TIME = process.env.BUILD_TIMESTAMP;
 
+// Dev builds set PRINTDECK_TAG (e.g. printdeck-card-dev) so a sideloaded dev
+// bundle can coexist with the HACS-installed card without fighting over the tag.
+const TAG = process.env.PRINTDECK_TAG || 'printdeck-card';
+
 // Ensure the element is registered
-if (!customElements.get('printdeck-card')) {
-  customElements.define('printdeck-card', PrintDeckCard);
+if (!customElements.get(TAG)) {
+  customElements.define(TAG, PrintDeckCard);
 }
 
 // Legacy tag alias so existing `type: custom:printwatch-card` configs keep working.
-// Will be removed in a future release.
+// Will be removed in a future release. Not registered by dev builds.
 class PrintWatchCard extends PrintDeckCard {}
-if (!customElements.get('printwatch-card')) {
+if (TAG === 'printdeck-card' && !customElements.get('printwatch-card')) {
   customElements.define('printwatch-card', PrintWatchCard);
 }
 
