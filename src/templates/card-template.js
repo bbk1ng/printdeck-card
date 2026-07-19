@@ -14,11 +14,11 @@ export const cardTemplate = (context) => {
     hass,
     amsSlots,
     controlFlags = {},
+    experimental = false,
     _toggleLight,
     _toggleFan,
     _cameraError,
     isOnline,
-    formatters,
     dialogConfig,
     confirmDialog,
     setDialogConfig,
@@ -54,7 +54,7 @@ export const cardTemplate = (context) => {
 
   return html`
     <div class="card">
-      ${headerTemplate(entities, controls)}
+      ${headerTemplate(entities, controls, experimental)}
       ${cameraFeedTemplate(cameraProps)}
       ${printStatusTemplate(entities, {
         hass,

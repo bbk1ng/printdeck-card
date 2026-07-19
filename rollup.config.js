@@ -40,8 +40,9 @@ export default {
     replace({
       preventAssignment: true,
       values: {
-        'process.env.VERSION': JSON.stringify(pkg.version),
-        'process.env.BUILD_TIMESTAMP': JSON.stringify(timestamp)
+        'process.env.VERSION': JSON.stringify(pkg.version + (process.env.PRINTDECK_TAG ? '-dev' : '')),
+        'process.env.BUILD_TIMESTAMP': JSON.stringify(timestamp),
+        'process.env.PRINTDECK_TAG': JSON.stringify(process.env.PRINTDECK_TAG || '')
       }
     }),
     babel({

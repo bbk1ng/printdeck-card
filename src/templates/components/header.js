@@ -1,11 +1,14 @@
 import { html } from 'lit';
 import { localize } from '../../utils/localize';
 import { formatDuration } from '../../utils/formatters';
+import { CARD_VERSION } from '../../constants/version';
 
-export const headerTemplate = (entities, controls) => html`
+export const headerTemplate = (entities, controls, experimental = false) => html`
   <div class="header">
     <div>
-      <div class="printer-name">${entities.name}</div>
+      <div class="printer-name">
+        ${entities.name}${CARD_VERSION.includes('-dev') ? html`<span class="dev-badge">DEV ${CARD_VERSION}</span>` : ''}${experimental ? html`<span class="dev-badge exp-badge">EXP</span>` : ''}
+      </div>
       <div class="status">
         ${localize.localize(`entity.sensor.state.${entities.status}`)}
         ${entities.isPrinting ? html`

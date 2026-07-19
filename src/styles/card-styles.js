@@ -69,6 +69,23 @@ export const cardStyles = css`
     color: var(--primary-text-color);
   }
 
+  .dev-badge {
+    background: #ff9800;
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+  }
+
+  .exp-badge {
+    background: #9c27b0;
+    color: #fff;
+  }
+
   .status {
     color: var(--state-active-color);
     font-size: 16px;

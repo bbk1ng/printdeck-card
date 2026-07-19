@@ -3,7 +3,7 @@ import { LitElement, html } from 'lit';
 import { cardTemplate } from '../templates/card-template';
 import { cardStyles } from '../styles/card-styles';
 import { formatDuration, formatEndTime } from '../utils/formatters';
-import { isPrinting, isPaused, getAmsSlots, getEntityStates } from '../utils/state-helpers';
+import { isPaused, getAmsSlots, getEntityStates } from '../utils/state-helpers';
 import { DEFAULT_CONFIG, DEFAULT_CAMERA_REFRESH_RATE } from '../constants/config';
 import { resolveConfig } from '../utils/entity-map';
 import { withCacheBust } from '../utils/camera-helpers';
@@ -222,6 +222,7 @@ class PrintDeckCard extends LitElement {
       hass: this.hass,
       amsSlots,
       controlFlags,
+      experimental: Boolean(this.config.experimental),
       formatters: this.formatters,
       _toggleLight: () => this._toggleLight(),
       _toggleFan: () => this._toggleFan(),

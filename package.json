@@ -7,7 +7,9 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c --watch",
-    "lint": "eslint src/*",
+    "watch:ha": "HA_WWW_DEST=/mnt/homeassistant/www/printdeck-dev PRINTDECK_TAG=printdeck-card-dev rollup -c --watch",
+    "deploy:ha": "HA_WWW_DEST=/mnt/homeassistant/www/printdeck-dev PRINTDECK_TAG=printdeck-card-dev rollup -c",
+    "lint": "eslint src/",
     "clean": "rimraf dist",
     "test": "node --test test/"
   },
