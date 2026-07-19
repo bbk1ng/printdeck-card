@@ -1,7 +1,7 @@
 /**
  * Static Phase 1 domain/suffix table for ha-bambulab-style entity IDs.
  * Resolve: `{domain}.{prefix}_{suffix}`
- * Explicit config `*_entity` keys always win over prefix derivation.
+ * Precedence: flat `*_entity` > overrides.<key> > prefix derivation.
  */
 
 /** @type {Record<string, { domain: string, suffix: string }>} */
@@ -58,7 +58,8 @@ export const isExplicitEntity = (value) =>
   typeof value === 'string' && value.trim() !== '';
 
 /**
- * Resolve card config: explicit *_entity → prefix table → empty.
+ * Resolve card config: flat *_entity > overrides.<key> > prefix table > empty.
+ * YAML-only `overrides:` map uses the same keys as flat `*_entity` slots.
  * Does not inject foreign P1S serials.
  *
  * @param {Record<string, unknown>} rawConfig
@@ -70,9 +71,17 @@ export const resolveConfig = (rawConfig = {}) => {
     typeof config.entity_prefix === 'string' && config.entity_prefix.trim()
       ? config.entity_prefix.trim()
       : '';
+  const overrides =
+    config.overrides && typeof config.overrides === 'object' && !Array.isArray(config.overrides)
+      ? config.overrides
+      : {};
 
   for (const [key, slot] of Object.entries(ENTITY_SLOTS)) {
     if (isExplicitEntity(config[key])) continue;
+    if (isExplicitEntity(overrides[key])) {
+      config[key] = overrides[key];
+      continue;
+    }
     if (prefix) {
       config[key] = buildEntityId(prefix, slot);
     } else {
