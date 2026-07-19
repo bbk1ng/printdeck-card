@@ -64,7 +64,7 @@ class PrintDeckCard extends LitElement {
     // Empty defaults first, then user config, then prefix resolution (A1)
     const merged = { ...DEFAULT_CONFIG, ...config };
     this.config = resolveConfig(merged);
-    this._cameraUpdateInterval = config.camera_refresh_rate || DEFAULT_CAMERA_REFRESH_RATE;
+    this._cameraUpdateInterval = this.config.camera_refresh_rate || DEFAULT_CAMERA_REFRESH_RATE;
   }
 
   /**
@@ -222,6 +222,7 @@ class PrintDeckCard extends LitElement {
       hass: this.hass,
       amsSlots,
       controlFlags,
+      config: this.config,
       experimental: Boolean(this.config.experimental),
       formatters: this.formatters,
       _toggleLight: () => this._toggleLight(),

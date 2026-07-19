@@ -57,8 +57,12 @@ Copy `dist/printdeck-card.js` to `config/www/` and add it as a dashboard resourc
 ## Configuration
 
 In dashboard edit mode, choose **Add card → PrintDeck**. The visual editor lets you name the
-printer and select a detected entity prefix (or enter one such as `bambulab_p2s`). Advanced
-entity overrides remain available in YAML.
+printer, select a detected entity prefix (or enter one such as `bambulab_p2s`), and configure
+display and control toggles. Advanced entity overrides remain available in YAML.
+
+> **Behavior change:** Temperature and speed tap-to-set controls are now read-only by default.
+> Enable **Allow temperature control** in the visual editor or set
+> `allow_temp_control: true` in YAML to restore them.
 
 Minimal config — `entity_prefix` derives every entity id as `{domain}.{prefix}_{suffix}`:
 

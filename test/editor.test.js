@@ -2,8 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   PRINTDECK_EDITOR_TAG,
+  PrintDeckCardEditor,
   createConfigElement,
   createStubConfig,
+  editorValue,
   findEntityPrefixes,
   registerPrintDeckCard,
   updateEditorConfig
@@ -44,6 +46,40 @@ test('editor updates preserve advanced YAML overrides', () => {
     entity_prefix: 'bambulab_p2s'
   });
   assert.notEqual(updated, original);
+});
+
+test('editor emits typed checkbox and number config changes', () => {
+  assert.equal(editorValue({ type: 'checkbox', checked: false }), false);
+  assert.equal(editorValue({ type: 'number', value: '2500' }), 2500);
+
+  const editor = Object.create(PrintDeckCardEditor.prototype);
+  editor._config = { printer_name: 'P2S' };
+  let emitted;
+  editor.dispatchEvent = (event) => {
+    emitted = event;
+    return true;
+  };
+  editor._valueChanged({
+    currentTarget: {
+      dataset: { configKey: 'allow_temp_control' },
+      type: 'checkbox',
+      checked: true
+    }
+  });
+
+  assert.equal(emitted.type, 'config-changed');
+  assert.equal(emitted.detail.config.allow_temp_control, true);
+  assert.equal(emitted.bubbles, true);
+  assert.equal(emitted.composed, true);
+
+  editor._valueChanged({
+    currentTarget: {
+      dataset: { configKey: 'camera_refresh_rate' },
+      type: 'number',
+      value: '2500'
+    }
+  });
+  assert.equal(emitted.detail.config.camera_refresh_rate, 2500);
 });
 
 test('visual card registration is duplicate-safe', () => {

@@ -1,4 +1,5 @@
 import { LitElement, css, html } from 'lit';
+import { DEFAULT_CAMERA_REFRESH_RATE } from '../constants/config.js';
 
 export const PRINTDECK_EDITOR_TAG = 'printdeck-card-editor';
 
@@ -23,6 +24,17 @@ export const updateEditorConfig = (config, key, value) => ({
   ...config,
   [key]: value
 });
+
+export const editorValue = (input) => {
+  if (input.type === 'checkbox') return input.checked;
+  if (input.type === 'number') {
+    const value = Number(input.value);
+    return input.value === '' || !Number.isFinite(value)
+      ? DEFAULT_CAMERA_REFRESH_RATE
+      : value;
+  }
+  return input.value.trim();
+};
 
 export const registerPrintDeckCard = (registry) => {
   if (registry.some((card) => card.type === 'printdeck-card')) return;
@@ -117,6 +129,22 @@ export class PrintDeckCardEditor extends LitElement {
           color-mix(in srgb, var(--primary-color, #03a9f4) 24%, transparent);
       }
 
+      label.toggle {
+        grid-template-columns: auto 1fr;
+        align-items: start;
+      }
+
+      .toggle input {
+        width: 20px;
+        min-height: 20px;
+        margin: 2px 0 0;
+      }
+
+      .toggle span {
+        display: grid;
+        gap: 3px;
+      }
+
       small {
         color: var(--secondary-text-color);
         font-size: 0.78rem;
@@ -137,7 +165,7 @@ export class PrintDeckCardEditor extends LitElement {
 
   _valueChanged(event) {
     const key = event.currentTarget.dataset.configKey;
-    const value = event.currentTarget.value.trim();
+    const value = editorValue(event.currentTarget);
     this._config = updateEditorConfig(this._config, key, value);
     this.dispatchEvent(
       new CustomEvent('config-changed', {
@@ -185,6 +213,56 @@ export class PrintDeckCardEditor extends LitElement {
               Select a detected printer or enter the part between
               <code>sensor.</code> and <code>_print_status</code>.
             </small>
+          </label>
+          <label class="toggle">
+            <input
+              type="checkbox"
+              data-config-key="show_camera"
+              .checked=${this._config.show_camera !== false}
+              @change=${this._valueChanged}
+            />
+            <span>Show camera<small>Display the live camera section when available.</small></span>
+          </label>
+          <label class="toggle">
+            <input
+              type="checkbox"
+              data-config-key="show_ams"
+              .checked=${this._config.show_ams !== false}
+              @change=${this._valueChanged}
+            />
+            <span>Show AMS<small>Display the filament slot strip.</small></span>
+          </label>
+          <label class="toggle">
+            <input
+              type="checkbox"
+              data-config-key="allow_temp_control"
+              .checked=${this._config.allow_temp_control === true}
+              @change=${this._valueChanged}
+            />
+            <span>
+              Allow temperature control
+              <small>Enable tap-to-set temperature and speed dialogs.</small>
+            </span>
+          </label>
+          <label>
+            Camera refresh rate (ms)
+            <input
+              type="number"
+              data-config-key="camera_refresh_rate"
+              .value=${String(
+                this._config.camera_refresh_rate ?? DEFAULT_CAMERA_REFRESH_RATE
+              )}
+              @change=${this._valueChanged}
+            />
+          </label>
+          <label class="toggle">
+            <input
+              type="checkbox"
+              data-config-key="experimental"
+              .checked=${this._config.experimental === true}
+              @change=${this._valueChanged}
+            />
+            <span>Experimental features<small>Opt in to unreleased features.</small></span>
           </label>
         </div>
       </div>

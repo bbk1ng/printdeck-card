@@ -26,6 +26,9 @@ overrides:
 - Same keys as today's flat `*_entity` keys.
 - Back-compat: flat keys keep working (HACS users); precedence
   flat key > overrides.<key> > prefix derivation. One-line merge in resolveConfig.
+- DONE (2026-07-19, on dev): implemented via orch (pr/grok/...-2903199-0) +
+  worktree fix accepting list-of-maps form; both YAML shapes valid.
+  Follow-up: console.warn on malformed override items.
 
 ## 3. Editor toggles (visual editor additions)
 - `show_camera` (default true) — camera section on/off
