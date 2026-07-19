@@ -42,3 +42,4 @@ dev-sync.sh
 .orch/*
 !.orch/ORCH.md
 !.orch/orch.yml
+node_modules
