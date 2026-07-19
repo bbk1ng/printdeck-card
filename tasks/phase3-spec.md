@@ -55,8 +55,8 @@ Direction LOCKED (2026-07-19): hybrid of mockup B + C
 Target: ~190px tall.
 
 ## Sequencing
-1. overrides section (small, unblocks nothing, low risk)
-2. editor toggles (small, builds on PR #1)
+1. overrides section — DONE on dev + merged to integration (2026-07-19)
+2. editor toggles — DONE on dev + merged to integration (2026-07-19)
 3. AMS sensors (needs live entity verification)
 4. compact layout (biggest, do last, on top of new sensors)
 
