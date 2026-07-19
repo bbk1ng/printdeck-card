@@ -15,8 +15,17 @@ import {
 } from '../utils/control-helpers';
 import { localize } from '../utils/localize';
 import { CARD_VERSION } from '../constants/version';
+import { createConfigElement, createStubConfig } from './printdeck-card-editor';
 
 class PrintDeckCard extends LitElement {
+  static getConfigElement() {
+    return createConfigElement();
+  }
+
+  static getStubConfig() {
+    return createStubConfig();
+  }
+
   static get properties() {
     return {
       hass: { type: Object },

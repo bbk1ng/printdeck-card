@@ -56,6 +56,10 @@ Copy `dist/printdeck-card.js` to `config/www/` and add it as a dashboard resourc
 
 ## Configuration
 
+In dashboard edit mode, choose **Add card → PrintDeck**. The visual editor lets you name the
+printer and select a detected entity prefix (or enter one such as `bambulab_p2s`). Advanced
+entity overrides remain available in YAML.
+
 Minimal config — `entity_prefix` derives every entity id as `{domain}.{prefix}_{suffix}`:
 
 ```yaml
