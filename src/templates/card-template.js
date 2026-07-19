@@ -18,7 +18,6 @@ export const cardTemplate = (context) => {
     _toggleFan,
     _cameraError,
     isOnline,
-    formatters,
     dialogConfig,
     confirmDialog,
     setDialogConfig,

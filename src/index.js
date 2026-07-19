@@ -1,6 +1,5 @@
 import PrintDeckCard from './components/printdeck-card';
 import { html, css, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
 
 // Ensure global availability of Lit core functions
 window.LitElement = LitElement;
