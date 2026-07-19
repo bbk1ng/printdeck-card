@@ -75,14 +75,36 @@ entity_prefix: bambulab_p2s
 Find your prefix in Developer Tools → States (e.g. `sensor.bambulab_p2s_bed_temperature`
 → prefix is `bambulab_p2s`).
 
-Any entity can be overridden individually; explicit keys always win over the prefix:
+### Display & control options
+
+Editable in the visual editor, or in YAML:
+
+| Key | Default | Effect |
+|---|---|---|
+| `show_camera` | `true` | Camera section on/off |
+| `show_ams` | `true` | AMS/material strip on/off |
+| `allow_temp_control` | `false` | Enable tap-to-set for bed/nozzle target and speed profile (read-only otherwise) |
+| `camera_refresh_rate` | `1000` | Camera refresh interval, ms |
+| `experimental` | `false` | Opt into unreleased features (shows an EXP chip) |
+
+### Entity overrides (YAML only)
+
+Any entity can be overridden; precedence is flat key > `overrides:` > prefix derivation.
+Both map and list YAML forms are accepted:
 
 ```yaml
 type: custom:printdeck-card
 printer_name: P2S
 entity_prefix: bambulab_p2s
-camera_refresh_rate: 1000                    # ms, default 1000
-camera_entity: camera.bambulab_p2s_camera    # example override
+overrides:
+  camera_entity: camera.hallway_cam        # map form (canonical)
+  bed_temp_entity: sensor.external_probe
+```
+
+Flat keys still work and always win:
+
+```yaml
+camera_entity: camera.bambulab_p2s_camera    # flat override, beats everything
 ```
 
 <details>
@@ -103,7 +125,7 @@ camera_entity: camera.bambulab_p2s_camera    # example override
 | `nozzle_target_temp_entity` | `sensor.{prefix}_nozzle_target_temperature` |
 | `speed_profile_entity` | `sensor.{prefix}_speed_profile` |
 | `ams_slot1_entity` … `ams_slot4_entity` | `sensor.{prefix}_ams_tray_1` … `_4` |
-| `ams_slot5_entity` … `ams_slot16_entity` | *(not derived — set explicitly for multi-AMS)* |
+| `ams_slot5_entity` … `ams_slot16_entity` | *(not derived — set explicitly or via `overrides:` for multi-AMS)* |
 | `external_spool_entity` | `sensor.{prefix}_external_spool_external_spool` |
 | `camera_entity` | `camera.{prefix}_camera` |
 | `cover_image_entity` | `image.{prefix}_cover_image` |
