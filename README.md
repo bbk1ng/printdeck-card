@@ -180,10 +180,13 @@ what the card expects.
 
 ## Screenshots
 
-Upstream screenshots (P1S era) — UI is largely unchanged:
+v1.5.0 on a real P2S (dark theme):
 
-![Dark mode](assets/dark-mode-min.png)
-![Light mode](assets/light-mode-min.png)
+![Card](assets/card-dark.png)
+
+The visual editor:
+
+![Visual editor](assets/editor-dark.png)
 
 ## Development
 
