@@ -81,6 +81,11 @@ export const cardStyles = css`
     letter-spacing: 0.5px;
   }
 
+  .exp-badge {
+    background: #9c27b0;
+    color: #fff;
+  }
+
   .status {
     color: var(--state-active-color);
     font-size: 16px;

@@ -213,6 +213,7 @@ class PrintDeckCard extends LitElement {
       hass: this.hass,
       amsSlots,
       controlFlags,
+      experimental: Boolean(this.config.experimental),
       formatters: this.formatters,
       _toggleLight: () => this._toggleLight(),
       _toggleFan: () => this._toggleFan(),

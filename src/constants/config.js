@@ -35,7 +35,9 @@ export const DEFAULT_CONFIG = {
   speed_select_entity: '',
   online_entity: '',
   print_weight_entity: '',
-  print_length_entity: ''
+  print_length_entity: '',
+  // Opt-in gate for unreleased features: `experimental: true` in card YAML.
+  experimental: false
 };
 
 /**
