@@ -7,6 +7,24 @@ Entries up to and including 1.2.0 are from the original
 ([@drkpxl](https://github.com/drkpxl)). Entries from 1.3.0 onward are the
 PrintDeck fork ([bbk1ng/printdeck-card](https://github.com/bbk1ng/printdeck-card)).
 
+## [1.5.1] - 2026-07-23
+
+### Fixed
+- Remaining time is normalised from the sensor's own `unit_of_measurement`
+  (h/d/s → minutes) and parsed as a float. The P2S integration reports hours,
+  so a 3.6 h remainder previously rendered as "3m".
+
+## [1.5.0] - 2026-07-22
+
+### Added
+- Lovelace visual editor with per-feature display toggles.
+- YAML-only `overrides:` map for entity slots, including nested multi-AMS
+  slots 5–16.
+- `experimental` config flag to opt into unreleased features.
+- Separate dev card tag and `-dev` version badge, so a dev build can coexist
+  with the HACS-installed card.
+- CI: lint + test + build workflow; built bundle uploaded to release assets.
+
 ## [1.4.0] - 2026-07-19 — PrintDeck code rename
 
 The rename announced in 1.3.0 lands in code. New standalone repository:
