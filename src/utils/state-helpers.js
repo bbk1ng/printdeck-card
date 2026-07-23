@@ -137,6 +137,16 @@ export const getEntityStates = (hass, config) => {
     const value = parser(hass.states[entity]?.state);
     return Number.isFinite(value) ? value : null;
   };
+  // Bambu reports remaining time in h (P2S) or min (P1S/X1). Normalise to minutes.
+  const getMinutes = (entity) => {
+    const value = getNumericState(entity, parseFloat);
+    if (value == null) return null;
+    const unit = (hass.states[entity]?.attributes?.unit_of_measurement || '').toLowerCase();
+    if (unit === 'h' || unit === 'hr' || unit === 'hours') return value * 60;
+    if (unit === 's' || unit === 'sec' || unit === 'seconds') return value / 60;
+    if (unit === 'd' || unit === 'days') return value * 1440;
+    return value;
+  };
 
   return {
     name: config.printer_name || 'Unnamed Printer',
@@ -146,7 +156,7 @@ export const getEntityStates = (hass, config) => {
     progress: getNumericState(config.progress_entity, parseFloat),
     currentLayer: getNumericState(config.current_layer_entity, parseInt),
     totalLayers: getNumericState(config.total_layers_entity, parseInt),
-    remainingTime: getNumericState(config.remaining_time_entity, parseInt),
+    remainingTime: getMinutes(config.remaining_time_entity),
     bedTemp: getNumericState(config.bed_temp_entity, parseFloat),
     nozzleTemp: getNumericState(config.nozzle_temp_entity, parseFloat),
     bedTargetTemp: getNumericState(config.bed_target_temp_entity, parseFloat),

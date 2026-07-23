@@ -333,3 +333,14 @@ test('print-status has no sensor.p1s_print_* hardcodes and joins stats without t
   assert.match(source, /statParts\.join/);
   assert.equal(/\|\s*`\s*:/.test(source), false);
 });
+
+test('remaining time normalizes hour and second units to minutes', () => {
+  const build = (state, unit) => getEntityStates({
+    states: { 'sensor.remaining_time': { state, attributes: { unit_of_measurement: unit } } }
+  }, numericConfig).remainingTime;
+
+  assert.equal(build('3.6', 'h'), 216);
+  assert.equal(build('90', 'min'), 90);
+  assert.equal(build('120', 's'), 2);
+  assert.equal(build('45', undefined), 45);
+});
